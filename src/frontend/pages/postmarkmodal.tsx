@@ -1,6 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 
+
+
+
 interface Postmark {
     id?: number;
     image?: string;
@@ -29,6 +32,9 @@ interface ModalProps {
     onClose: () => void;
 }
 
+
+
+// FIXME use flexbox isnteaf of hard percent
 const Overlay = styled.div`
     position: fixed;
     top: 0;
@@ -45,7 +51,7 @@ const Overlay = styled.div`
 const ModalContainer = styled.div`
     background: white;
     border-radius: 10px;
-    width: 80vw;
+    width: 60vw;
     //max-width: 800px;
     height: 80vh;
     display: flex;
@@ -53,14 +59,10 @@ const ModalContainer = styled.div`
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
     overflow: hidden;
 
-    @media (max-width: 768px) {
-        flex-direction: column; /* Stack image and content on small screens */
-        height: auto;
-    }
 `;
 
 const ImageContainer = styled.div`
-    width: 40%;
+    width: 70%;
     background-color: #f0f0f0;
     display: flex;
     align-items: center;
@@ -82,15 +84,15 @@ const Image = styled.img`
 `;
 
 const Content = styled.div`
-    width: 60%;
+    width: 30%;
     padding: 1.5rem;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
 
-    @media (max-width: 768px) {
-        width: 100%;
-    }
+    //@media (max-width: 768px) {
+    //    width: 100%;
+    //}
 `;
 
 const Title = styled.h3`

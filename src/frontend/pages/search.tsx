@@ -194,6 +194,7 @@ const PostmarksList: React.FC = () => {
                 </tbody>
             </StyledTable>
 
+            // FIXME click outside should leave modal
             {selectedPostmark && (
                 <PostmarkModal postmark={selectedPostmark} onClose={() => setSelectedPostmark(null)} />
             )}
