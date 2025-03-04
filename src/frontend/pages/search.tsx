@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styled from 'styled-components';
-import PostmarkModal from './postmarkmodal'; // Import the modal
+import PostmarkModal from './postmarkmodal';
+import PostmarksTable from './table';
 
 interface Postmark {
     id: number;
@@ -9,8 +10,6 @@ interface Postmark {
     town: string;
     state: string;
     date_seen?: string;
-    size?: string;
-    colors?: string;
 }
 
 const Container = styled.div`
@@ -20,6 +19,7 @@ const Container = styled.div`
     flex-direction: column;
     align-items: center;
     overflow-y: scroll;
+    position: relative;
 `;
 
 const Title = styled.h2`
@@ -39,84 +39,73 @@ const SearchInput = styled.input`
     font-size: 1rem;
 `;
 
-const StyledTable = styled.table`
-    width: 100%;
-    table-layout: fixed;
-    border-collapse: collapse;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-
-    th, td {
-        border: 1px solid #ddd;
-        padding: 0.75rem 1rem;
-        text-align: left;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    thead th {
-        position: sticky;
-        top: 0;
-        background-color: #f4f4f4;
-    }
-
-    tbody tr:nth-child(even) {
-        background-color: #f9f9f9;
-    }
-
-    tbody tr:hover {
-        background-color: #f1f1f1;
-        cursor: pointer;
-    }
+const FilterContainer = styled.div`
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    align-items: center;
 `;
 
-const Image = styled.img`
-    max-width: 80px;
-    max-height: 80px;
+const FilterInput = styled.input`
+    width: 7rem;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
     border-radius: 4px;
 `;
 
-const Message = styled.div<{ error?: boolean }>`
-    text-align: center;
-    margin-top: 2rem;
-    font-size: 1.25rem;
-    color: ${({ error }) => (error ? '#d9534f' : '#555')};
+// TODO global button
+//TODO global textbox
+const Button = styled.button`
+    padding: 0.5rem 1rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    &:hover {
+        background-color: #0056b3;
+    }
 `;
+
+const FilterButton = styled(Button)`
+
+`;
+
+const BackToTopButton = styled(Button)<{ visible: boolean }>`
+    position: sticky;
+    bottom: 1rem;
+    right: 1rem;
+    margin-left: auto;
+    padding: 0.75rem;
+`;
+
+
 
 const PostmarksList: React.FC = () => {
     const [postmarks, setPostmarks] = useState<Postmark[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedPostmark, setSelectedPostmark] = useState<Postmark | null>(null);
-
-    const [loadingMore, setLoadingMore] = useState(false);
-    const [hasMore, setHasMore] = useState(true);
-    // const [postmarks, setPostmarks] = useState<Postmark[]>([]);
-    // const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(true);
-    // const [loadingMore, setLoadingMore] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [page, setPage] = useState(1);
-    // const [hasMore, setHasMore] = useState(true);
+    const [hasMore, setHasMore] = useState(true);
+    const [loadingMore, setLoadingMore] = useState(false);
+    const [query, setQuery] = useState<{ startYear?: number; endYear?: number }>({});
+    const [appliedQuery, setAppliedQuery] = useState<{ startYear?: number; endYear?: number }>({});
+    const [showBackToTop, setShowBackToTop] = useState(false);
 
-    // Fetch postmarks
+    const containerRef = useRef<HTMLDivElement | null>(null);
+
     useEffect(() => {
-        fetch('http://localhost:3001/api/postmarks?page=1')
+        fetch(`http://localhost:3001/api/postmarks?page=1`)
             .then(res => res.json())
             .then(data => setPostmarks(data.data))
-            .catch(err => console.error('Error fetching postmarks:', err));
+            .catch(err => setError('Error fetching postmarks: ' + err.message));
     }, []);
-
-    // Filtered postmarks
-    const filteredPostmarks = postmarks.filter(pm =>
-        pm.postmark.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        pm.town.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        pm.state.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
 
     const fetchPostmarks = useCallback(
         (pageNumber: number) => {
-            // Adjust the URL based on how your API handles pagination.
             return fetch(`http://localhost:3001/api/postmarks?page=${pageNumber}`)
                 .then(response => {
                     if (!response.ok) {
@@ -135,7 +124,6 @@ const PostmarksList: React.FC = () => {
         []
     );
 
-    // Function to load more entries
     const loadMore = useCallback(() => {
         if (loadingMore || !hasMore) return;
         setLoadingMore(true);
@@ -150,22 +138,32 @@ const PostmarksList: React.FC = () => {
                 setLoadingMore(false);
             })
             .catch(err => {
-                console.error("Error loading more postmarks:", err);
                 setError(err.message);
                 setLoadingMore(false);
             });
     }, [fetchPostmarks, hasMore, loadingMore, page]);
 
-    // Scroll event listener to trigger load more
-    const handleScroll = (e) => {
-        const { scrollTop, clientHeight, scrollHeight } = e.target;
+    const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+        const { scrollTop, clientHeight, scrollHeight } = e.currentTarget;
         if (scrollTop + clientHeight + 100 >= scrollHeight && hasMore) {
             loadMore();
         }
+        setShowBackToTop(scrollTop > 200); // Show button when scrolled down
+    };
+
+    const scrollToTop = () => {
+        if (containerRef.current) {
+            containerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    };
+
+    const applyFilters = () => {
+        setAppliedQuery(query);
+        loadMore();
     };
 
     return (
-        <Container onScroll={handleScroll}>
+        <Container ref={containerRef} onScroll={handleScroll}>
             <Title>Postmarks</Title>
             <SearchInput
                 type="text"
@@ -173,31 +171,28 @@ const PostmarksList: React.FC = () => {
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
             />
-            <StyledTable>
-                <thead>
-                <tr>
-                    <th>Image</th>
-                    <th>Postmark</th>
-                    <th>Town</th>
-                    <th>State</th>
-                </tr>
-                </thead>
-                <tbody>
-                {filteredPostmarks.map(pm => (
-                    <tr key={pm.id} onClick={() => setSelectedPostmark(pm)}>
-                        <td><Image src={`data:image/jpeg;base64,${pm.image}`} alt={pm.postmark} /></td>
-                        <td>{pm.postmark}</td>
-                        <td>{pm.town}</td>
-                        <td>{pm.state}</td>
-                    </tr>
-                ))}
-                </tbody>
-            </StyledTable>
 
-            // FIXME click outside should leave modal
-            {selectedPostmark && (
-                <PostmarkModal postmark={selectedPostmark} onClose={() => setSelectedPostmark(null)} />
-            )}
+            <FilterContainer>
+                <FilterInput
+                    type="number"
+                    placeholder="Start Year"
+                    value={query.startYear || '1700'}
+                    onChange={e => setQuery({ ...query, startYear: e.target.value ? parseInt(e.target.value) : undefined })}
+                />
+                <FilterInput
+                    type="number"
+                    placeholder="End Year"
+                    value={query.endYear || '1850'}
+                    onChange={e => setQuery({ ...query, endYear: e.target.value ? parseInt(e.target.value) : undefined })}
+                />
+                <FilterButton onClick={applyFilters}>Apply Filters</FilterButton>
+            </FilterContainer>
+
+            <PostmarksTable postmarks={postmarks} onRowClick={setSelectedPostmark} query={appliedQuery} />
+
+            {selectedPostmark && <PostmarkModal postmark={selectedPostmark} onClose={() => setSelectedPostmark(null)} />}
+
+            <BackToTopButton visible={showBackToTop} onClick={scrollToTop}>↑Back to top</BackToTopButton>
         </Container>
     );
 };

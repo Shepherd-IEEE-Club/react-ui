@@ -66,26 +66,44 @@ app.get('/api/postmarks', async (req, res) => {
     const limit = 50;
     const offset = (page - 1) * limit;
 
-    try {
-        const postmarks = await Postmark.findAll({
-            limit,
-            offset,
-        });
+    // Unpack possible query options
+    const {
+        start_year,
+        end_year
+    } = req.query;
 
-        // Convert image blob to Base64 string for each record
-        const formattedPostmarks = postmarks.map(pm => {
-            // Convert the image Buffer to a Base64 string if it exists
-            const imageBase64 = pm.image ? pm.image.toString('base64') : null;
-            return {
-                ...pm.toJSON(), // Convert the Sequelize model instance to a plain object
-                image: imageBase64, // Replace the blob with the Base64 string
-            };
-        });
+    // Construct where clause
+    const whereClause = {};
 
-        res.json({ data: formattedPostmarks });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+    // TODO client's job to default either year if not given
+
+    // Add date filtering if both start_year and end_year are provided
+    if (start_year && end_year) {
+        whereClause.date_seen = {
+            [Sequelize.Op.between]: [`${start_year}-01-01`, `${end_year}-12-31`]
+        };
     }
+
+    // try {
+    const postmarks = await Postmark.findAll({
+        where: whereClause,
+        limit,
+        offset,
+    });
+
+    // Convert image blob to Base64 string for each record
+    const formattedPostmarks = postmarks.map(pm => {
+        const imageBase64 = pm.image ? pm.image.toString('base64') : null;
+        return {
+            ...pm.toJSON(),
+            image: imageBase64,
+        };
+    });
+
+    res.json({ data: formattedPostmarks });
+    // } catch (error) {
+    //     res.status(500).json({ error: error.message });
+    // }
 });
 
 // Authenticate the database connection and start the server.
