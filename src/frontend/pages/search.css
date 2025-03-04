@@ -1,0 +1,64 @@
+/* Container for the table */
+.table-container {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 1rem;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Title styling */
+.title {
+    text-align: center;
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+/* Basic table styling */
+.postmarks-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.postmarks-table th,
+.postmarks-table td {
+    border: 1px solid #ddd;
+    padding: 0.75rem 1rem;
+    text-align: left;
+}
+
+.postmarks-table thead {
+    background-color: #f4f4f4;
+}
+
+.postmarks-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.postmarks-table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Image styling */
+.postmark-img {
+    max-width: 80px;
+    max-height: 80px;
+    border-radius: 4px;
+}
+
+/* Message styling */
+.message {
+    text-align: center;
+    margin-top: 2rem;
+    font-size: 1.25rem;
+    color: #555;
+}
+
+.message.error {
+    color: #d9534f;
+}
+
+

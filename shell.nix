@@ -3,5 +3,6 @@
 pkgs.mkShell {
   buildInputs = [
     pkgs.nodejs_20
+    pkgs.yarn
   ];
 }
