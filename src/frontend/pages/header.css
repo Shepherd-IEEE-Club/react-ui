@@ -1,10 +1,9 @@
 .storybook-header {
-  position: fixed;
+  position: sticky;
+  top: 0;                /* Enables sticky behavior */
   width: 100%;           /* Use 100% of the container's width */
   box-sizing: border-box; /* Include padding in width calculation */
-  top: 0;
-  left: 0;
-  z-index: 1000;
+  z-index: 100;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -12,7 +11,9 @@
   padding: 15px 20px;
   background-color: #fff;
   font-family: 'Nunito Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  height: 100%;
 }
+
 
 .storybook-header svg {
   display: inline-block;
