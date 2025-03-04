@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
-
-
+import PostmarkModal from './postmarkmodal'; // Import the modal
 
 interface Postmark {
     id: number;
@@ -14,19 +13,8 @@ interface Postmark {
     colors?: string;
 }
 
-// const ContentContainer = styled.div`
-//     //padding: 1rem;
-//     //width: inherit;
-//     //display: flex;
-//     //flex-direction: column;
-//     //align-items: center;
-//     overflow-y: auto;
-//     height: 100%;
-//     //height: auto;
-// `;
-
 const Container = styled.div`
-    width: 100vh;
+    width: 80rem;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -43,7 +31,7 @@ const Title = styled.h2`
 
 const SearchInput = styled.input`
     display: block;
-    width: 100%;
+    width: 80%;
     padding: 0.75rem;
     margin-bottom: 1rem;
     border: 1px solid #ddd;
@@ -53,21 +41,23 @@ const SearchInput = styled.input`
 
 const StyledTable = styled.table`
     width: 100%;
+    table-layout: fixed;
     border-collapse: collapse;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 
-    th,
-    td {
+    th, td {
         border: 1px solid #ddd;
         padding: 0.75rem 1rem;
         text-align: left;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     thead th {
         position: sticky;
         top: 0;
-        background-color: #f4f4f4; /* Keeps header background visible */
-        z-index: 10000000; /* Ensures the header stays above table rows */
+        background-color: #f4f4f4;
     }
 
     tbody tr:nth-child(even) {
@@ -76,9 +66,9 @@ const StyledTable = styled.table`
 
     tbody tr:hover {
         background-color: #f1f1f1;
+        cursor: pointer;
     }
 `;
-
 
 const Image = styled.img`
     max-width: 80px;
@@ -96,13 +86,34 @@ const Message = styled.div<{ error?: boolean }>`
 const PostmarksList: React.FC = () => {
     const [postmarks, setPostmarks] = useState<Postmark[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
-    const [loading, setLoading] = useState(true);
+    const [selectedPostmark, setSelectedPostmark] = useState<Postmark | null>(null);
+
     const [loadingMore, setLoadingMore] = useState(false);
+    const [hasMore, setHasMore] = useState(true);
+    // const [postmarks, setPostmarks] = useState<Postmark[]>([]);
+    // const [searchTerm, setSearchTerm] = useState('');
+    const [loading, setLoading] = useState(true);
+    // const [loadingMore, setLoadingMore] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [page, setPage] = useState(1);
-    const [hasMore, setHasMore] = useState(true);
+    // const [hasMore, setHasMore] = useState(true);
 
-    // Function to fetch postmarks for a given page
+    // Fetch postmarks
+    useEffect(() => {
+        fetch('http://localhost:3001/api/postmarks?page=1')
+            .then(res => res.json())
+            .then(data => setPostmarks(data.data))
+            .catch(err => console.error('Error fetching postmarks:', err));
+    }, []);
+
+    // Filtered postmarks
+    const filteredPostmarks = postmarks.filter(pm =>
+        pm.postmark.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        pm.town.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        pm.state.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+
     const fetchPostmarks = useCallback(
         (pageNumber: number) => {
             // Adjust the URL based on how your API handles pagination.
@@ -123,23 +134,6 @@ const PostmarksList: React.FC = () => {
         },
         []
     );
-
-    // Initial load
-    useEffect(() => {
-        fetchPostmarks(1)
-            .then(data => {
-                setPostmarks(data);
-                setLoading(false);
-                if (data.length === 0) {
-                    setHasMore(false);
-                }
-            })
-            .catch(err => {
-                console.error("Error fetching postmarks:", err);
-                setError(err.message);
-                setLoading(false);
-            });
-    }, [fetchPostmarks]);
 
     // Function to load more entries
     const loadMore = useCallback(() => {
@@ -170,67 +164,39 @@ const PostmarksList: React.FC = () => {
         }
     };
 
-
-
-    // Filter the postmarks based on the search term.
-    const filteredPostmarks = postmarks.filter(pm => {
-        const lowerSearch = searchTerm.toLowerCase();
-        return (
-            pm.postmark.toLowerCase().includes(lowerSearch) ||
-            pm.town.toLowerCase().includes(lowerSearch) ||
-            pm.state.toLowerCase().includes(lowerSearch)
-        );
-    });
-
-    if (loading) {
-        return <Message>Loading postmarks...</Message>;
-    }
-
-    if (error) {
-        return <Message error>Error: {error}</Message>;
-    }
-
-
     return (
         <Container onScroll={handleScroll}>
-            {/*<ContentContainer>*/}
-                <Title>Postmarks</Title>
-                <SearchInput
-                    type="text"
-                    placeholder="Search postmarks..."
-                    value={searchTerm}
-                    onChange={e => setSearchTerm(e.target.value)}
-                />
-                <StyledTable >
-                    <thead>
-                    <tr>
-                        <th>Image</th>
-                        <th>Postmark</th>
-                        <th>Town</th>
-                        <th>State</th>
-                        <th>Date Seen</th>
-                        <th>Size</th>
-                        <th>Colors</th>
+            <Title>Postmarks</Title>
+            <SearchInput
+                type="text"
+                placeholder="Search postmarks..."
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
+            />
+            <StyledTable>
+                <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Postmark</th>
+                    <th>Town</th>
+                    <th>State</th>
+                </tr>
+                </thead>
+                <tbody>
+                {filteredPostmarks.map(pm => (
+                    <tr key={pm.id} onClick={() => setSelectedPostmark(pm)}>
+                        <td><Image src={`data:image/jpeg;base64,${pm.image}`} alt={pm.postmark} /></td>
+                        <td>{pm.postmark}</td>
+                        <td>{pm.town}</td>
+                        <td>{pm.state}</td>
                     </tr>
-                    </thead>
-                    <tbody>
-                    {filteredPostmarks.map(pm => (
-                        <tr key={pm.id}>
-                            <td>
-                                <Image src={`data:image/jpeg;base64,${pm.image}`} alt={pm.postmark} />
-                            </td>
-                            <td>{pm.postmark}</td>
-                            <td>{pm.town}</td>
-                            <td>{pm.state}</td>
-                            <td>{pm.date_seen}</td>
-                            <td>{pm.size}</td>
-                            <td>{pm.colors}</td>
-                        </tr>
-                    ))}
-                    </tbody>
-                </StyledTable>
-                {loadingMore && <Message>Loading more postmarks...</Message>}
-            {/*</ContentContainer>*/}
+                ))}
+                </tbody>
+            </StyledTable>
+
+            {selectedPostmark && (
+                <PostmarkModal postmark={selectedPostmark} onClose={() => setSelectedPostmark(null)} />
+            )}
         </Container>
     );
 };
