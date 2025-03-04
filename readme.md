@@ -2,6 +2,18 @@ Mock-up UI for Mr. Stamps.
 React.js and node.js
 
 
+
+# To run
+npm install
+
+copy paste postmarks.db into src/backend/data/
+
+run server.js to server database
+
+Storybook
+$ yarn
+$ yarn storybook
+
 - Sticky Header on every page
   - Maybe It could be big and shrink when you scroll?
 - Split pages up (Search, info, etc), Weird to have everything in one big long page
