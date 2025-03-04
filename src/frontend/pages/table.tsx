@@ -53,6 +53,8 @@ const Image = styled.img`
     border-radius: 4px;
 `;
 
+//FIXME scroll to load +query +filter makes this non-trivial and a can of worms. a lot needs to be redone here
+
 const PostmarksTable: React.FC<PostmarksTableProps> = ({ postmarks, onRowClick, query }) => {
     const filteredPostmarks = postmarks.filter(pm => {
         if (!pm.date_seen) return true;

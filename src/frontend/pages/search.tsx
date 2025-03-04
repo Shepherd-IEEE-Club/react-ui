@@ -39,12 +39,16 @@ const SearchInput = styled.input`
     font-size: 1rem;
 `;
 
+// FIXME made of candy
 const FilterContainer = styled.div`
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 3 items per row */
+    //flex-wrap: wrap;
     gap: 1rem;
     margin-bottom: 1rem;
-    align-items: center;
+    justify-content: space-evenly;
 `;
+
 
 const FilterInput = styled.input`
     width: 7rem;
@@ -80,6 +84,15 @@ const BackToTopButton = styled(Button)<{ visible: boolean }>`
     padding: 0.75rem;
 `;
 
+const FilterLabel = styled.label`
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+`;
+
+const FilterCheckbox = styled.input.attrs({ type: "checkbox" })`
+    margin-right: 5px;
+`;
 
 
 const PostmarksList: React.FC = () => {
@@ -124,6 +137,9 @@ const PostmarksList: React.FC = () => {
         []
     );
 
+
+
+
     const loadMore = useCallback(() => {
         if (loadingMore || !hasMore) return;
         setLoadingMore(true);
@@ -159,34 +175,66 @@ const PostmarksList: React.FC = () => {
 
     const applyFilters = () => {
         setAppliedQuery(query);
-        loadMore();
     };
+
 
     return (
         <Container ref={containerRef} onScroll={handleScroll}>
             <Title>Postmarks</Title>
-            <SearchInput
-                type="text"
-                placeholder="Search postmarks..."
-                value={searchTerm}
-                onChange={e => setSearchTerm(e.target.value)}
-            />
 
+
+            {/*TODO this ought to be its own file */}
             <FilterContainer>
+                <FilterLabel>State</FilterLabel>
+                <FilterInput type="text" placeholder="Enter state" />
+
+                <FilterLabel>Town</FilterLabel>
+                <FilterInput type="text" placeholder="Enter town" />
+
+                <FilterLabel>Begin Year</FilterLabel>
                 <FilterInput
                     type="number"
                     placeholder="Start Year"
                     value={query.startYear || '1700'}
                     onChange={e => setQuery({ ...query, startYear: e.target.value ? parseInt(e.target.value) : undefined })}
                 />
+
+                <FilterLabel>End Year</FilterLabel>
                 <FilterInput
                     type="number"
                     placeholder="End Year"
                     value={query.endYear || '1850'}
                     onChange={e => setQuery({ ...query, endYear: e.target.value ? parseInt(e.target.value) : undefined })}
                 />
+
+                <FilterLabel>Type</FilterLabel>
+                <FilterInput type="text" placeholder="Enter type" />
+
+                <FilterLabel>Color</FilterLabel>
+                <FilterInput type="text" placeholder="Enter color" />
+
+                <FilterLabel>
+                    <FilterCheckbox type="checkbox" /> Include Manuscripts
+                </FilterLabel>
+
+                <FilterLabel>
+                    <FilterCheckbox type="checkbox" /> Images Only
+                </FilterLabel>
+
                 <FilterButton onClick={applyFilters}>Apply Filters</FilterButton>
             </FilterContainer>
+
+
+
+            <SearchInput
+                type="text"
+                placeholder="Search postmarks..."
+                value={query.searchTerm || ''}
+                onChange={e => setQuery({ ...query, searchTerm: e.target.value })}
+            />
+
+
+
 
             <PostmarksTable postmarks={postmarks} onRowClick={setSelectedPostmark} query={appliedQuery} />
 

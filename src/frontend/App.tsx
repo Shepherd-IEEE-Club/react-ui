@@ -1,16 +1,18 @@
-// App.tsx
 import React from "react";
-import SearchableList from "./pages/search";
-import { Header } from './pages/Header';
-import styled from "styled-components";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import styled, { createGlobalStyle } from "styled-components";
 
-import { createGlobalStyle } from 'styled-components';
+import SearchableList from "./pages/search";
+import { Header } from "./pages/Header";
+import LandingPage from "./pages/landing";
+import InfoPage from "./pages/info";
+
 const GlobalStyle = createGlobalStyle`
   html, body, #root {
     height: 100%;
     margin: 0;
     padding: 0;
-  overflow: hidden;
+    overflow: hidden;
   }
   
   body {
@@ -19,11 +21,10 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-
 const Page = styled.div`
-    display: flex;
-    flex-direction: column;
-    height: 100vh; /* Ensure the page fills the viewport */
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 `;
 
 const Container = styled.div`
@@ -35,15 +36,41 @@ const Container = styled.div`
     overflow-y: scroll;
 `;
 
+const NavBar = styled.nav`
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 10px;
+    //background: #007bff;
+`;
+
+const NavLink = styled(Link)`
+    color: white;
+    text-decoration: none;
+    font-size: 1.2rem;
+    font-weight: bold;
+
+    &:hover {
+        text-decoration: underline;
+    }
+`;
+
+// FIXME nav fucked up header
 const App: React.FC = () => {
     return (
-        <Page>
+        <Router>
             <GlobalStyle />
-            <Header />
-            <Container>
-                <SearchableList />
-            </Container>
-        </Page>
+            <Page>
+                <Header />
+                <Container>
+                    <Routes>
+                        <Route path="/" element={<LandingPage />} />
+                        <Route path="/search" element={<SearchableList />} />
+                        <Route path="/info" element={<InfoPage />} />
+                    </Routes>
+                </Container>
+            </Page>
+        </Router>
     );
 };
 
