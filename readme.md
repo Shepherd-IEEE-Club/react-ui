@@ -38,4 +38,6 @@ React.js and node.js
          - This needs to be intuitive:
            - Visual indicator of how far you've scrolled (maybe like vscode)
            - Loading spinner when fetching more entries
-           - A button to return back to the top 
+           - A button to return back to the top
+          
+  - Create fluid webpages
