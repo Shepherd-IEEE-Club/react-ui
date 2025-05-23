@@ -2,6 +2,8 @@ Mock-up UI for Mr. Stamps.
 React.js and node.js
 
 
+test
+
 - Sticky Header on every page
   - Maybe It could be big and shrink when you scroll?
 - Split pages up (Search, info, etc), Weird to have everything in one big long page
