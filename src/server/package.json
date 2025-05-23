@@ -1,0 +1,23 @@
+{
+  "name": "@woco/server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com//Shepherd-IEEE-Club/react-ui.git"
+  },
+  "private": true,
+
+  "dependencies": {
+    "@woco/schema": "*",
+    "@woco/db": "*",
+  "express": "^4",
+  "cors": "^2",
+  "sequelize": "^6",
+  "sqlite3": "^5"
+}
+}

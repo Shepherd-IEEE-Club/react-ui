@@ -2,59 +2,19 @@ import express from 'express';
 import cors from 'cors';
 import { Sequelize, DataTypes, Op } from 'sequelize';
 
+
 const app = express();
 const port = 3001;
+
+
+import { PostmarkListSchema } from '@woco/schema';
+
 
 // Enable CORS so your front end (e.g., Storybook) can access the API
 app.use(cors());
 
-// Initialize Sequelize to use your SQLite file.
-// Adjust the path to your SQLite database file as needed.
-const sequelize = new Sequelize({
-    dialect: 'sqlite',
-    storage: '../data/postmarks.db',
-    logging: true,
-});
-
-// Define the Postmark model corresponding to your table.
-const Postmark = sequelize.define('Postmark', {
-    id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        allowNull: false,
-    },
-    image: {
-        type: DataTypes.BLOB,
-        allowNull: false,
-    },
-    postmark: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    town: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    state: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    date_seen: {
-        type: DataTypes.STRING,
-        allowNull: true,
-    },
-    size: {
-        type: DataTypes.STRING,
-        allowNull: true,
-    },
-    colors: {
-        type: DataTypes.STRING,
-        allowNull: true,
-    },
-}, {
-    tableName: 'postmarks', // Must match your table name exactly.
-    timestamps: false,      // Disable if your table doesn't have createdAt/updatedAt.
-});
+import { initDb } from '@woco/db';
+import { PostmarkModel } from '@woco/db/models/postmark';
 
 // API endpoint that fetches all postmarks using Sequelize's ORM methods.
 // API endpoint to fetch postmarks with pagination
@@ -83,7 +43,7 @@ app.get('/api/postmarks', async (req, res) => {
     }
 
     // try {
-    const postmarks = await Postmark.findAll({
+    const postmarks = await PostmarkModel.findAll({
         where: whereClause,
         limit,
         offset,
@@ -105,13 +65,13 @@ app.get('/api/postmarks', async (req, res) => {
 });
 
 // Authenticate the database connection and start the server.
-sequelize.authenticate()
-    .then(() => {
-        console.log('Connected to SQLite successfully.');
-        app.listen(port, () => {
-            console.log(`Server is running on http://localhost:${port}`);
-        });
-    })
+
+// FIXME Looks stupid
+initDb()
+    .then(
+        () => app.listen(port, () =>
+        console.log(`🌐  http://localhost:${port}`)))
     .catch(err => {
-        console.error('Unable to connect to the database:', err);
+        console.error('DB init failed:', err);
+        process.exit(1);
     });
