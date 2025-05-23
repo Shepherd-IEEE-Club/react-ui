@@ -1,8 +1,6 @@
-// server.js
-
-const express = require('express');
-const cors = require('cors');
-const { Sequelize, DataTypes } = require('sequelize');
+import express from 'express';
+import cors from 'cors';
+import { Sequelize, DataTypes, Op } from 'sequelize';
 
 const app = express();
 const port = 3001;
@@ -14,8 +12,8 @@ app.use(cors());
 // Adjust the path to your SQLite database file as needed.
 const sequelize = new Sequelize({
     dialect: 'sqlite',
-    storage: 'data/postmarks.db',
-    logging: false,
+    storage: '../data/postmarks.db',
+    logging: true,
 });
 
 // Define the Postmark model corresponding to your table.
