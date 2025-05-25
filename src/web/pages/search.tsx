@@ -1,17 +1,26 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import styled from 'styled-components';
-import PostmarkModal from './postmarkmodal';
-import PostmarksTable from './table';
+import React, { useRef, useCallback, useState } from "react";
+import styled from "styled-components";
+import { trpc } from "@woco/web/trpc";
+import PostmarkModal from "./postmarkmodal";
+import PostmarksTable from "./table";
 
-interface Postmark {
+/**
+ * Shape returned by the backend (see postmarksRouter.infinite)
+ */
+export interface Postmark {
     id: number;
     image: string;
     postmark: string;
     town: string;
     state: string;
     date_seen?: string;
+    // add more fields if your DB row has them
 }
 
+/** Pagination page size */
+const PAGE_SIZE = 40;
+
+/* ---------- styled‑components ---------- */
 const Container = styled.div`
     width: 80rem;
     height: 100%;
@@ -39,26 +48,21 @@ const SearchInput = styled.input`
     font-size: 1rem;
 `;
 
-// FIXME made of candy
 const FilterContainer = styled.div`
     display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 3 items per row */
-    //flex-wrap: wrap;
+    grid-template-columns: repeat(4, 1fr);
     gap: 1rem;
     margin-bottom: 1rem;
     justify-content: space-evenly;
 `;
 
-
 const FilterInput = styled.input`
-    width: 7rem;
-    padding: 0.5rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+  width: 7rem;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
 `;
 
-// TODO global button
-//TODO global textbox
 const Button = styled.button`
     padding: 0.5rem 1rem;
     background-color: #007bff;
@@ -72,177 +76,137 @@ const Button = styled.button`
     }
 `;
 
-const FilterButton = styled(Button)`
-
-`;
-
-const BackToTopButton = styled(Button)<{ visible: boolean }>`
-    position: sticky;
-    bottom: 1rem;
-    right: 1rem;
-    margin-left: auto;
-    padding: 0.75rem;
-`;
-
-const FilterLabel = styled.label`
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-`;
-
-const FilterCheckbox = styled.input.attrs({ type: "checkbox" })`
-    margin-right: 5px;
-`;
-
-
-const PostmarksList: React.FC = () => {
-    const [postmarks, setPostmarks] = useState<Postmark[]>([]);
-    const [searchTerm, setSearchTerm] = useState('');
+/* ---------- component ---------- */
+const Search: React.FC = () => {
+    /* UI state */
     const [selectedPostmark, setSelectedPostmark] = useState<Postmark | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [page, setPage] = useState(1);
-    const [hasMore, setHasMore] = useState(true);
-    const [loadingMore, setLoadingMore] = useState(false);
-    const [query, setQuery] = useState<{ startYear?: number; endYear?: number }>({});
-    const [appliedQuery, setAppliedQuery] = useState<{ startYear?: number; endYear?: number }>({});
-    const [showBackToTop, setShowBackToTop] = useState(false);
+    const [filters, setFilters] = useState<{
+        startYear?: number;
+        endYear?: number;
+        state?: string;
+        town?: string;
+        searchTerm?: string;
+    }>({});
+    const [appliedFilters, setAppliedFilters] = useState<typeof filters>({});
 
-    const containerRef = useRef<HTMLDivElement | null>(null);
+    /* infinite query */
+    const {
+        data,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
+        isLoading,
+        error,
+    } = trpc.infinite.useInfiniteQuery(
+        { limit: PAGE_SIZE, ...appliedFilters },
 
-    useEffect(() => {
-        fetch(`http://localhost:3001/api/postmarks?page=1`)
-            .then(res => res.json())
-            .then(data => setPostmarks(data.data))
-            .catch(err => setError('Error fetching postmarks: ' + err.message));
-    }, []);
-
-    const fetchPostmarks = useCallback(
-        (pageNumber: number) => {
-            return fetch(`http://localhost:3001/api/postmarks?page=${pageNumber}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok: ' + response.statusText);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data && Array.isArray(data.data)) {
-                        return data.data as Postmark[];
-                    } else {
-                        throw new Error('Unexpected data shape: ' + JSON.stringify(data));
-                    }
-                });
-        },
-        []
+        {
+            getNextPageParam: (last) => last.nextCursor ?? undefined,
+            keepPreviousData: true,
+        }
     );
 
+    const postmarks: Postmark[] = data?.pages.flatMap((p) => p.items) ?? [];
+    console.log("🔍 postmarks length:", postmarks.length);
+    console.log("📄 pages:", data?.pages);
 
+    /* infinite‑scroll handler */
+    const containerRef = useRef<HTMLDivElement>(null);
+    const handleScroll = useCallback(
+        (e: React.UIEvent<HTMLDivElement>) => {
+            const { scrollTop, clientHeight, scrollHeight } = e.currentTarget;
+            if (
+                scrollTop + clientHeight + 100 >= scrollHeight &&
+                hasNextPage &&
+                !isFetchingNextPage
+            ) {
+                fetchNextPage();
+            }
+        },
+        [hasNextPage, isFetchingNextPage, fetchNextPage]
+    );
 
+    /* actions */
+    const applyFilters = () => setAppliedFilters(filters);
 
-    const loadMore = useCallback(() => {
-        if (loadingMore || !hasMore) return;
-        setLoadingMore(true);
-        fetchPostmarks(page + 1)
-            .then(newData => {
-                if (newData.length === 0) {
-                    setHasMore(false);
-                } else {
-                    setPostmarks(prev => [...prev, ...newData]);
-                    setPage(prev => prev + 1);
-                }
-                setLoadingMore(false);
-            })
-            .catch(err => {
-                setError(err.message);
-                setLoadingMore(false);
-            });
-    }, [fetchPostmarks, hasMore, loadingMore, page]);
-
-    const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-        const { scrollTop, clientHeight, scrollHeight } = e.currentTarget;
-        if (scrollTop + clientHeight + 100 >= scrollHeight && hasMore) {
-            loadMore();
-        }
-        setShowBackToTop(scrollTop > 200); // Show button when scrolled down
-    };
-
-    const scrollToTop = () => {
-        if (containerRef.current) {
-            containerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-    };
-
-    const applyFilters = () => {
-        setAppliedQuery(query);
-    };
-
-
+    /* render */
     return (
         <Container ref={containerRef} onScroll={handleScroll}>
             <Title>Postmarks</Title>
 
-
-            {/*TODO this ought to be its own file */}
+            {/* Filters */}
             <FilterContainer>
-                <FilterLabel>State</FilterLabel>
-                <FilterInput type="text" placeholder="Enter state" />
+                <label>
+                    State
+                    <FilterInput
+                        type="text"
+                        placeholder="Enter state"
+                        value={filters.state ?? ""}
+                        onChange={(e) => setFilters({ ...filters, state: e.target.value || undefined })}
+                    />
+                </label>
+                <label>
+                    Town
+                    <FilterInput
+                        type="text"
+                        placeholder="Enter town"
+                        value={filters.town ?? ""}
+                        onChange={(e) => setFilters({ ...filters, town: e.target.value || undefined })}
+                    />
+                </label>
+                <label>
+                    Begin Year
+                    <FilterInput
+                        type="number"
+                        placeholder="Start Year"
+                        value={filters.startYear ?? ""}
+                        onChange={(e) =>
+                            setFilters({
+                                ...filters,
+                                startYear: e.target.value ? Number(e.target.value) : undefined,
+                            })
+                        }
+                    />
+                </label>
+                <label>
+                    End Year
+                    <FilterInput
+                        type="number"
+                        placeholder="End Year"
+                        value={filters.endYear ?? ""}
+                        onChange={(e) =>
+                            setFilters({
+                                ...filters,
+                                endYear: e.target.value ? Number(e.target.value) : undefined,
+                            })
+                        }
+                    />
+                </label>
 
-                <FilterLabel>Town</FilterLabel>
-                <FilterInput type="text" placeholder="Enter town" />
-
-                <FilterLabel>Begin Year</FilterLabel>
-                <FilterInput
-                    type="number"
-                    placeholder="Start Year"
-                    value={query.startYear || '1700'}
-                    onChange={e => setQuery({ ...query, startYear: e.target.value ? parseInt(e.target.value) : undefined })}
-                />
-
-                <FilterLabel>End Year</FilterLabel>
-                <FilterInput
-                    type="number"
-                    placeholder="End Year"
-                    value={query.endYear || '1850'}
-                    onChange={e => setQuery({ ...query, endYear: e.target.value ? parseInt(e.target.value) : undefined })}
-                />
-
-                <FilterLabel>Type</FilterLabel>
-                <FilterInput type="text" placeholder="Enter type" />
-
-                <FilterLabel>Color</FilterLabel>
-                <FilterInput type="text" placeholder="Enter color" />
-
-                <FilterLabel>
-                    <FilterCheckbox type="checkbox" /> Include Manuscripts
-                </FilterLabel>
-
-                <FilterLabel>
-                    <FilterCheckbox type="checkbox" /> Images Only
-                </FilterLabel>
-
-                <FilterButton onClick={applyFilters}>Apply Filters</FilterButton>
+                <Button onClick={applyFilters}>Apply Filters</Button>
             </FilterContainer>
 
-
-
+            {/* Full‑text search */}
             <SearchInput
                 type="text"
-                placeholder="Search postmarks..."
-                value={query.searchTerm || ''}
-                onChange={e => setQuery({ ...query, searchTerm: e.target.value })}
+                placeholder="Search postmarks…"
+                value={filters.searchTerm ?? ""}
+                onChange={(e) => setFilters({ ...filters, searchTerm: e.target.value || undefined })}
             />
 
+            {/* table */}
+            <PostmarksTable postmarks={postmarks} onRowClick={setSelectedPostmark} loading={isLoading} />
 
+            {/* modal */}
+            {selectedPostmark && (
+                <PostmarkModal postmark={selectedPostmark} onClose={() => setSelectedPostmark(null)} />
+            )}
 
-
-            <PostmarksTable postmarks={postmarks} onRowClick={setSelectedPostmark} query={appliedQuery} />
-
-            {selectedPostmark && <PostmarkModal postmark={selectedPostmark} onClose={() => setSelectedPostmark(null)} />}
-
-            <BackToTopButton visible={showBackToTop} onClick={scrollToTop}>↑Back to top</BackToTopButton>
+            {/* load‑more marker for screen‑readers / debug */}
+            {isFetchingNextPage && <p style={{ margin: "1rem" }}>Loading more…</p>}
+            {error && <p style={{ color: "red" }}>{(error as Error).message}</p>}
         </Container>
     );
 };
 
-export default PostmarksList;
+export default Search;

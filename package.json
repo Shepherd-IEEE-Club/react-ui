@@ -31,13 +31,19 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@tanstack/react-query": "^5.77.0",
+    "@trpc/client": "^11",
+    "@trpc/react-query": "^11.1.2",
+    "@vitejs/plugin-react": "^4.5.0",
     "@woco/db": "^1.0.0",
     "cors": "^2.8.5",
     "express": "^4.21.2",
+    "react-dom": "^19.1.0",
     "react-router-dom": "^7.2.0",
     "sequelize": "^6.37.5",
     "sqlite3": "^5.1.7",
-    "styled-components": "^6.1.15"
+    "styled-components": "^6.1.15",
+    "superjson": "^2.2.2"
   },
   "workspaces": [
     "src/*"

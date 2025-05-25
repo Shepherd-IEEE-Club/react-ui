@@ -56,12 +56,16 @@ const Image = styled.img`
 //FIXME scroll to load +query +filter makes this non-trivial and a can of worms. a lot needs to be redone here
 
 const PostmarksTable: React.FC<PostmarksTableProps> = ({ postmarks, onRowClick, query }) => {
-    const filteredPostmarks = postmarks.filter(pm => {
-        if (!pm.date_seen) return true;
-        const year = new Date(pm.date_seen).getFullYear();
-        return (!query.startYear || year >= query.startYear) &&
-            (!query.endYear || year <= query.endYear);
-    });
+    // const filteredPostmarks = postmarks.filter(pm => {
+    //     // if (!pm.date_seen) return true;
+    //     // const year = new Date(pm.date_seen).getFullYear();
+    //     return query;
+    //     // return (!query.startYear || year >= query.startYear) &&
+    //     //     (!query.endYear || year <= query.endYear);
+    // });
+    const filteredPostmarks = postmarks;
+    // FIXME filtering not working
+
 
     return (
         <StyledTable>
