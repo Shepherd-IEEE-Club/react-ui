@@ -1,21 +1,11 @@
 import React, { useRef, useCallback, useState } from "react";
 import styled from "styled-components";
 import { trpc } from "@woco/web/trpc";
-import PostmarkModal from "./postmarkmodal";
+import PostmarkModal from "./PostmarkModal/main";
 import PostmarksTable from "./table";
 
-/**
- * Shape returned by the backend (see postmarksRouter.infinite)
- */
-export interface Postmark {
-    id: number;
-    image: string;
-    postmark: string;
-    town: string;
-    state: string;
-    date_seen?: string;
-    // add more fields if your DB row has them
-}
+import type { Postmark } from "@woco/schema/postmark";
+//FIXME why fuck these errors bru
 
 /** Pagination page size */
 const PAGE_SIZE = 40;
@@ -210,3 +200,6 @@ const Search: React.FC = () => {
 };
 
 export default Search;
+
+//TODO infinite scroll does not work when viewing search indivdiaully in storybook
+// FIXME filtering fucked up
