@@ -53,7 +53,7 @@ const Image = styled.img`
     border-radius: 4px;
 `;
 
-//FIXME scroll to load +query +filter makes this non-trivial and a can of worms. a lot needs to be redone here
+//FIXME back to top button
 
 const PostmarksTable: React.FC<PostmarksTableProps> = ({ postmarks, onRowClick, query }) => {
     // const filteredPostmarks = postmarks.filter(pm => {

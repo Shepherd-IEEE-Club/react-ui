@@ -21,6 +21,7 @@ const config: StorybookConfig = {
         check: false,
         reactDocgen: 'none'
     }
+
 };
 
 export default config;
