@@ -4,7 +4,7 @@ import styled from "styled-components";
 import {Button} from "@woco/web/pages/Button";
 import Detail from "./Detail";
 import MakeTicket from "./MakeTicket";
-
+import ImageCarousel from './ImageCarousel';
 
 import type {Postmark} from "@woco/schema/postmark";
 
@@ -117,7 +117,7 @@ const Main: React.FC<ModalProps> = ({postmark, onClose}) => {
         <Overlay>
             <ModalContainer>
                 <ImageContainer>
-                    <Image src={`data:image/jpeg;base64,${postmark.images[0]}`} alt={postmark.postmark}/>
+                    <ImageCarousel postmark={postmark} />
                 </ImageContainer>
                 <Content>
                     <Button onClick={() => {

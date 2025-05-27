@@ -5,11 +5,13 @@ import PostmarkModal from "./PostmarkModal/main";
 import PostmarksTable from "./table";
 
 import type { Postmark } from "@woco/schema/postmark";
-import {useBatchImages} from "../hooks/useBatchImages";
+
+
+
 //FIXME why fuck these errors bru
 
 /** Pagination page size */
-const PAGE_SIZE = 40;
+const PAGE_SIZE = 100;
 
 /* ---------- styled‑components ---------- */
 const Container = styled.div`
@@ -107,9 +109,9 @@ const Search: React.FC = () => {
         }
     }, [data]);
 
-    useBatchImages(postmarks, () => {
-        setPostmarks([...postmarks]); // Triggers React to re-render
-    });
+    // useBatchImages(postmarks, () => {
+    //     setPostmarks([...postmarks]); // Triggers React to re-render
+    // });
 
 
     // const postmarks: Postmark[] = data?.pages.flatMap((p) => p.items) ?? [];
@@ -220,3 +222,4 @@ export default Search;
 
 //TODO infinite scroll does not work when viewing search indivdiaully in storybook
 // FIXME filtering fucked up
+// TODO clear on filter form change

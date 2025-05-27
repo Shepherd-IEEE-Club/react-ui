@@ -1,16 +1,5 @@
 import { z } from 'zod';
 
-export const PostmarkSchema = z.object({
-    id:            z.number(),
-    postmark:      z.string(),
-    town:          z.string(),
-    state:         z.string(),
-    date_seen:     z.string().optional(),
-    size:          z.string().optional(),
-    colors:        z.string().optional(),
-});
-export type Postmark = z.infer<typeof PostmarkSchema>;
-
 export const PostmarkImageSchema = z.object({
     id: z.number(),
     postmark_id: z.number(),
@@ -20,10 +9,24 @@ export const PostmarkImageSchema = z.object({
 });
 export type PostmarkImage = z.infer<typeof PostmarkImageSchema>;
 
-// TODO TRPC
-export const PostmarkWithImagesSchema = PostmarkSchema.extend({
-    images: z.array(PostmarkImageSchema),
+export const PostmarkSchema = z.object({
+    id:            z.number(),
+    postmark:      z.string(),
+    town:          z.string(),
+    state:         z.string(),
+    date_seen:     z.string().optional(),
+    size:          z.string().optional(),
+    colors:        z.string().optional(),
+    images: z.array(PostmarkImageSchema).optional()
+
 });
+export type Postmark = z.infer<typeof PostmarkSchema>;
+
+
+// // TODO TRPC
+// export const PostmarkWithImagesSchema = PostmarkSchema.extend({
+//     images: z.array(PostmarkImageSchema),
+// });
 
 
 export const TicketChangesSchema = PostmarkSchema

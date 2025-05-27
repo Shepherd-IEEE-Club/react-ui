@@ -74,7 +74,7 @@ const PostmarksTable: React.FC<PostmarksTableProps> = ({ postmarks, onRowClick, 
             <tbody>
             {filteredPostmarks.map(pm => (
                 <tr key={pm.id} onClick={() => onRowClick(pm)}>
-                    <td><Image src={`data:image/jpeg;base64,${pm.images[0].base64}`} alt={pm.postmark} /></td>
+                    <td><Image src={`data:image/jpeg;base64,${pm.images[0].thumbnail}`} alt={pm.postmark} /></td>
                     <td>{pm.postmark}</td>
                     <td>{pm.town}</td>
                     <td>{pm.state}</td>

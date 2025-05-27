@@ -34,73 +34,6 @@ export const appRouter = router({
                 }));
             }),
 
-        // infinite: procedure
-        //     .input(
-        //         z.object({
-        //             limit: z.number().min(1).max(100).default(40),
-        //             cursor: z.number().nullish(), // id of the last item the client has
-        //             startYear: z.number().optional(),
-        //             endYear: z.number().optional(),
-        //             // add other filters here
-        //         })
-        //     )
-        //     .query(async ({ input }) => {
-        //         const { limit, cursor, startYear, endYear } = input;
-        //
-        //         const where: any = {};
-        //         if (startYear) {
-        //             where.date_seen = { [Sequelize.Op.gte]: `${startYear}-01-01` };
-        //         }
-        //         if (endYear) {
-        //             where.date_seen = where.date_seen
-        //                 ? { ...where.date_seen, [Sequelize.Op.lte]: `${endYear}-12-31` }
-        //                 : { [Sequelize.Op.lte]: `${endYear}-12-31` };
-        //         }
-        //         if (cursor) {
-        //             where.id = { [Sequelize.Op.gt]: cursor };
-        //         }
-        //
-        //         const postmarks = await PostmarkModel.findAll({
-        //             where,
-        //             order: [['id', 'ASC']],
-        //             limit: limit + 1,
-        //         });
-        //
-        //         const postmarkIds = postmarks.map(p => p.id);
-        //
-        //         const images = await PostmarkImageModel.findAll({
-        //             where: { postmark_id: postmarkIds },
-        //             attributes: ['id', 'postmark_id'], // no blob
-        //         });
-        //
-        //         const groupedImages = images.reduce((acc, img) => {
-        //             (acc[img.postmark_id] ||= []).push({ id: img.id });
-        //             return acc;
-        //         }, {} as Record<number, { id: number }[]>);
-        //
-        //         const rows = postmarks.map(p => ({
-        //             ...p.toJSON(),
-        //             images: groupedImages[p.id] || [],
-        //         }));
-        //
-        //
-        //
-        //
-        //         let nextCursor: number | undefined = undefined;
-        //         if (rows.length > limit) {
-        //             const next = rows.pop();
-        //             nextCursor = next!.id;
-        //         }
-        //
-        //         return {
-        //             // items: rows.map((r) => ({
-        //             //     ...r.toJSON(),
-        //             //     images: r.images?.map(img => ({ id: img.id })) ?? [],
-        //             // })),
-        //             items: rows,
-        //             nextCursor,
-        //         };
-        //     }),
 
         infinite: procedure
             .input(
@@ -143,7 +76,7 @@ export const appRouter = router({
                     include: [{
                         model: PostmarkImageModel,
                         as: 'images',
-                        attributes: ['id'],
+                        attributes: ['id', 'thumbnail'],
                         separate: true, // ← optimized secondary fetch
                     }],
                 });
