@@ -1,12 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import type { Postmark } from "@woco/schema/postmark";
+import type {Postmark} from "@woco/schema/postmark.ts";
 
 interface PostmarksTableProps {
-    postmarks: Postmark[];
-    onRowClick: (postmark: Postmark) => void;
-    query: { startYear?: number; endYear?: number };
+    postmarks: Postmark[],
+    onRowClick: (postmark: Postmark) => void,
+    query: { startYear?: number; endYear?: number },
+    loading: boolean
 }
 
 const StyledTable = styled.table`
@@ -48,7 +49,7 @@ const Image = styled.img`
 
 //FIXME back to top button
 
-const PostmarksTable: React.FC<PostmarksTableProps> = ({ postmarks, onRowClick, query }) => {
+const PostmarksTable: React.FC<PostmarksTableProps> = ({postmarks, onRowClick, query, loading}) => {
     // const filteredPostmarks = postmarks.filter(pm => {
     //     // if (!pm.date_seen) return true;
     //     // const year = new Date(pm.date_seen).getFullYear();
@@ -74,7 +75,8 @@ const PostmarksTable: React.FC<PostmarksTableProps> = ({ postmarks, onRowClick, 
             <tbody>
             {filteredPostmarks.map(pm => (
                 <tr key={pm.id} onClick={() => onRowClick(pm)}>
-                    <td><Image src={`data:image/jpeg;base64,${pm.images[0].thumbnail}`} alt={pm.postmark} /></td>
+                    {/*FIXME do without mutating?*/}
+                    <td><Image src={`data:image/jpeg;base64,${pm.images?.[0].thumbnail}`} alt={pm.postmark}/></td>
                     <td>{pm.postmark}</td>
                     <td>{pm.town}</td>
                     <td>{pm.state}</td>

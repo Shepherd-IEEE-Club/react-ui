@@ -3,12 +3,12 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
-import Main from './main';
-import {Postmark} from "./search";
+import Index from './index.tsx';
+import {Postmark} from "@woco/schema/postmark.ts";
 
 export default {
   title: 'Components/PostmarkModal',
-  component: Main,
+  component: Index,
   argTypes: {
     postmark: {
       control: 'object',
@@ -16,10 +16,10 @@ export default {
     },
     onClose: { action: 'closed', description: 'Callback when close button is clicked' },
   },
-} as Meta<typeof Main>;
+} as Meta<typeof Index>;
 
 const Template: Story<{ postmark: Postmark; onClose: () => void }> = (args) => (
-    <Main {...args} />
+    <Index {...args} />
 );
 
 export const Default = Template.bind({});

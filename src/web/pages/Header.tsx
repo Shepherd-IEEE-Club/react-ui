@@ -1,9 +1,9 @@
 import React from 'react';
-import { Link } from "react-router-dom";
-import { Button } from './Button';
+import { Link } from 'react-router-dom';
+import { Button } from './Button.ts';
 import './header.css';
 
-export const Header = () => (
+export const Header: React.FC = () => (
     <header>
         <div className="storybook-header">
             <div className="header-left">

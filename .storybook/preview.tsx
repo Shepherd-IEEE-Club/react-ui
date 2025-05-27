@@ -3,7 +3,7 @@ import React from 'react';
 import { initialize, mswLoader } from 'msw-storybook-addon';
 import type { Preview } from '@storybook/react';
 import { withThemeByDataAttribute } from '@storybook/addon-themes';
-import { TRPCReactProvider } from '@woco/web/msw';
+import { TRPCReactProvider } from '@woco/web/msw.tsx';
 
 initialize();
 

@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import Search from './search';
+import Index from './index.tsx';
 
 const meta = {
-  component: Search,
-} satisfies Meta<typeof Search>;
+  component: Index,
+} satisfies Meta<typeof Index>;
 
 export default meta;
 

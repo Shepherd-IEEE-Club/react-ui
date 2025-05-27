@@ -1,12 +1,12 @@
 import React, {useState} from "react";
 import styled from "styled-components";
 
-import {Button} from "@woco/web/pages/Button";
-import Detail from "./Detail";
-import MakeTicket from "./MakeTicket";
-import ImageCarousel from './ImageCarousel';
+import {Button} from "@woco/web/pages/Button.ts";
+import Detail from "./Detail.tsx";
+import MakeTicket from "./MakeTicket.tsx";
+import ImageCarousel from './ImageCarousel.tsx';
 
-import type {Postmark} from "@woco/schema/postmark";
+import type {Postmark} from "@woco/schema/postmark.ts";
 
 interface ModalProps {
     postmark?: Postmark;
@@ -107,7 +107,7 @@ const Select = styled.select`
 `;
 
 
-const Main: React.FC<ModalProps> = ({postmark, onClose}) => {
+const PostmarkModal: React.FC<ModalProps> = ({postmark, onClose}) => {
     const [isEditing, setIsEditing] = useState(false);
 
     const toggleView = () => setIsEditing((prev) => !prev);
@@ -136,4 +136,4 @@ const Main: React.FC<ModalProps> = ({postmark, onClose}) => {
     );
 };
 
-export default Main;
+export default PostmarkModal;

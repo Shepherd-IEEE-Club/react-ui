@@ -6,11 +6,11 @@ import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import { httpBatchLink, loggerLink } from "@trpc/client";
 
 
-import SearchableList from "./pages/search";
-import {Header} from "./pages/Header";
-import LandingPage from "./pages/landing";
-import InfoPage from "./pages/info";
-import {trpc} from "@woco/web/trpc";
+import SearchableList from "@woco/web/pages/Search/index.tsx";
+import {Header} from "@woco/web/pages/Header.tsx";
+import LandingPage from "@woco/web/pages/landing.tsx";
+import InfoPage from "@woco/web/pages/info.tsx";
+import {trpc} from "@woco/web/trpc.ts";
 /* ───────────────────────  styling  ─────────────────────── */
 
 const GlobalStyle = createGlobalStyle`

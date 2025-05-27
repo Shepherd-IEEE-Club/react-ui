@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import type { Postmark } from "@woco/schema/postmark";
-import {useBatchImages} from "../../hooks/useBatchImages";
+import type { Postmark } from "@woco/schema/postmark.ts";
+import {useBatchImages} from "@woco/web/hooks/useBatchImages.ts";
 
 interface Props {
     postmark: Postmark

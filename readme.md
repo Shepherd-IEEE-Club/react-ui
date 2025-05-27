@@ -6,19 +6,19 @@ test
 
 - Sticky Header on every page
   - Maybe It could be big and shrink when you scroll?
-- Split pages up (Search, info, etc), Weird to have everything in one big long page
+- Split pages up (Index, info, etc), Weird to have everything in one big long page
   - tabs?
   - sidebar?
-- Search area
+- Index area
   - Enlarge image
     - On hover?
       - Maybe not be intuitive to old people.
     - Click on row/picture to enlarge and focus, click again anywhere to un-large. 
   (Include a big X button too, old people.) 
-  - Search options area
+  - Index options area
     - follow you when you scroll  
     - Sidebar with search options that's always there? meh...
-  - Search options
+  - Index options
     - Town, database could store a list of towns to fill in.
       Easy way to do this is to have a town table and join with pm table
     - Drop down yes or no boxes should be checkboxes

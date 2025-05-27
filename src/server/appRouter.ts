@@ -1,8 +1,8 @@
 import {router, procedure} from './trpc';
 import {z} from 'zod';
 import {Sequelize} from 'sequelize';
-import {PostmarkImageModel, PostmarkModel} from '@woco/db/models/postmark';
-import { GetImagesInput } from '@woco/schema/postmark/image';
+import {PostmarkImageModel, PostmarkModel} from '@woco/db/models/postmark.ts';
+import { GetImagesInput } from '@woco/schema/image.ts';
 
 export const appRouter = router({
     postmarks: router({

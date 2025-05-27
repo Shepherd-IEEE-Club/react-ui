@@ -1,10 +1,10 @@
 import React, {useRef, useCallback, useState, useMemo, useEffect} from "react";
 import styled from "styled-components";
-import { trpc } from "@woco/web/trpc";
-import PostmarkModal from "./PostmarkModal/main";
-import PostmarksTable from "./table";
+import { trpc } from "@woco/web/trpc.ts";
+import PostmarkModal from "@woco/web/pages/PostmarkModal";
+import PostmarksTable from "./table.tsx";
 
-import type { Postmark } from "@woco/schema/postmark";
+import type { Postmark } from "@woco/schema/postmark.ts";
 
 
 
@@ -198,7 +198,7 @@ const Search: React.FC = () => {
             {/* Full‑text search */}
             <SearchInput
                 type="text"
-                placeholder="Search postmarks…"
+                placeholder="Index postmarks…"
                 value={filters.searchTerm ?? ""}
                 onChange={(e) => setFilters({ ...filters, searchTerm: e.target.value || undefined })}
             />

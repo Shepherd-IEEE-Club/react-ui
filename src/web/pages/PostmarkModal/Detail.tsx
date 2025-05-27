@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components";
-import { Button } from "@woco/web/pages/Button";
+import { Button } from "@woco/web/pages/Button.ts";
 
-import type { Postmark } from "@woco/schema/postmark";
+import type { Postmark } from "@woco/schema/postmark.ts";
 
 interface ModalProps {
     postmark?: Postmark;
