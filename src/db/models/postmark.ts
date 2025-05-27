@@ -1,41 +1,64 @@
-import { DataTypes } from 'sequelize';
-import { sequelize } from '../client';
+// src/db/models/postmark.ts
+import {DataTypes, Model, InferAttributes, InferCreationAttributes} from 'sequelize';
+import {sequelize} from '../client';
 
-export const PostmarkModel = sequelize.define('Postmark', {
-    id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        allowNull: false,
+/* ---------- Postmark ---------- */
+export class PostmarkModel extends Model<
+    InferAttributes<PostmarkModel>,
+    InferCreationAttributes<PostmarkModel>
+> {
+}
+
+PostmarkModel.init(
+    {
+        id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+        postmark: {type: DataTypes.STRING, allowNull: false},
+        town: {type: DataTypes.STRING, allowNull: false},
+        state: {type: DataTypes.STRING, allowNull: false},
+        date_seen: {type: DataTypes.STRING, allowNull: true},
+        size: {type: DataTypes.STRING, allowNull: true},
+        colors: {type: DataTypes.STRING, allowNull: true},
     },
-    image: {
-        type: DataTypes.BLOB,
-        allowNull: false,
+    {
+        sequelize,
+        tableName: 'postmarks',
+        timestamps: false,
+    }
+);
+
+/* ---------- PostmarkImage ---------- */
+export class PostmarkImageModel extends Model<
+    InferAttributes<PostmarkImageModel>,
+    InferCreationAttributes<PostmarkImageModel>
+> {
+}
+
+PostmarkImageModel.init(
+    {
+        id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+        postmark_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {model: 'postmarks', key: 'id'},
+            onDelete: 'CASCADE',
+        },
+        //     TODO bytes instead of BS4
+        data: {type: DataTypes.BLOB('long'), allowNull: false},
     },
-    postmark: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    town: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    state: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    date_seen: {
-        type: DataTypes.STRING,
-        allowNull: true,
-    },
-    size: {
-        type: DataTypes.STRING,
-        allowNull: true,
-    },
-    colors: {
-        type: DataTypes.STRING,
-        allowNull: true,
-    },
-}, {
-    tableName: 'postmarks', // Must match your table name exactly.
-    timestamps: false,      // Disable if your table doesn't have createdAt/updatedAt.
+    {
+        sequelize,
+        tableName: 'postmark_images',
+        timestamps: false,
+    }
+);
+
+PostmarkModel.hasMany(PostmarkImageModel, {
+    foreignKey: 'postmark_id',
+    as: 'images',
 });
+PostmarkImageModel.belongsTo(PostmarkModel, {
+    foreignKey: 'postmark_id',
+});
+
+
+export {sequelize};

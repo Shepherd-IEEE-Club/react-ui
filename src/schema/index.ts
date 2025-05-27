@@ -13,15 +13,12 @@ export type Postmark = z.infer<typeof PostmarkSchema>;
 
 export const PostmarkImageSchema = z.object({
     id: z.number(),
-    postmarkId: z.number(),
-    data: z.string(),  // base64 or URL
+    postmark_id: z.number(),
+    data: z.string(),
+    thumbnail: z.string(),
     // caption: z.string().optional(),
 });
 export type PostmarkImage = z.infer<typeof PostmarkImageSchema>;
-
-
-export const PostmarkListSchema = z.array(PostmarkSchema);
-export type PostmarkList = z.infer<typeof PostmarkListSchema>;
 
 // TODO TRPC
 export const PostmarkWithImagesSchema = PostmarkSchema.extend({
@@ -30,7 +27,7 @@ export const PostmarkWithImagesSchema = PostmarkSchema.extend({
 
 
 export const TicketChangesSchema = PostmarkSchema
-    .omit({ id: true, image: true })  // naughty fields
+    .omit({ id: true})  // naughty fields
     .partial()  // all fields optional
 
     // for adding and removing images

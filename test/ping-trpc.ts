@@ -13,7 +13,7 @@ const client = createTRPCProxyClient<AppRouter>({
 });
 
 async function main() {
-    const res = await client.postmarks.query({ page: 1 });
+    const res = await client.postmarks.paged.query({ page: 1 });
     console.log('✅ Got result:', res);
 }
 

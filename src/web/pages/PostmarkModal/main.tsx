@@ -117,7 +117,7 @@ const Main: React.FC<ModalProps> = ({postmark, onClose}) => {
         <Overlay>
             <ModalContainer>
                 <ImageContainer>
-                    <Image src={`data:image/jpeg;base64,${postmark.image}`} alt={postmark.postmark}/>
+                    <Image src={`data:image/jpeg;base64,${postmark.images[0]}`} alt={postmark.postmark}/>
                 </ImageContainer>
                 <Content>
                     <Button onClick={() => {

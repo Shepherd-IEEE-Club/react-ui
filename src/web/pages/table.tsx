@@ -1,14 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-interface Postmark {
-    id: number;
-    image: string;
-    postmark: string;
-    town: string;
-    state: string;
-    date_seen?: string;
-}
+import type { Postmark } from "@woco/schema/postmark";
 
 interface PostmarksTableProps {
     postmarks: Postmark[];
@@ -81,7 +74,7 @@ const PostmarksTable: React.FC<PostmarksTableProps> = ({ postmarks, onRowClick, 
             <tbody>
             {filteredPostmarks.map(pm => (
                 <tr key={pm.id} onClick={() => onRowClick(pm)}>
-                    <td><Image src={`data:image/jpeg;base64,${pm.image}`} alt={pm.postmark} /></td>
+                    <td><Image src={`data:image/jpeg;base64,${pm.images[0].base64}`} alt={pm.postmark} /></td>
                     <td>{pm.postmark}</td>
                     <td>{pm.town}</td>
                     <td>{pm.state}</td>

@@ -1,10 +1,11 @@
-import React, { useRef, useCallback, useState } from "react";
+import React, {useRef, useCallback, useState, useMemo, useEffect} from "react";
 import styled from "styled-components";
 import { trpc } from "@woco/web/trpc";
 import PostmarkModal from "./PostmarkModal/main";
 import PostmarksTable from "./table";
 
 import type { Postmark } from "@woco/schema/postmark";
+import {useBatchImages} from "../hooks/useBatchImages";
 //FIXME why fuck these errors bru
 
 /** Pagination page size */
@@ -87,7 +88,7 @@ const Search: React.FC = () => {
         isFetchingNextPage,
         isLoading,
         error,
-    } = trpc.infinite.useInfiniteQuery(
+    } = trpc.postmarks.infinite.useInfiniteQuery(
         { limit: PAGE_SIZE, ...appliedFilters },
 
         {
@@ -95,10 +96,26 @@ const Search: React.FC = () => {
             keepPreviousData: true,
         }
     );
+    const [postmarks, setPostmarks] = useState<Postmark[]>([]);
 
-    const postmarks: Postmark[] = data?.pages.flatMap((p) => p.items) ?? [];
-    console.log("🔍 postmarks length:", postmarks.length);
-    console.log("📄 pages:", data?.pages);
+    // Update postmarks state when data changes
+    useEffect(() => {
+        if (!data?.pages) return;
+        const newPostmarks = data.pages.flatMap(p => p.items);
+        if (newPostmarks.length !== postmarks.length) {
+            setPostmarks(newPostmarks);
+        }
+    }, [data]);
+
+    useBatchImages(postmarks, () => {
+        setPostmarks([...postmarks]); // Triggers React to re-render
+    });
+
+
+    // const postmarks: Postmark[] = data?.pages.flatMap((p) => p.items) ?? [];
+    // useBatchImages(postmarks);
+    // console.log(postmarks)
+
 
     /* infinite‑scroll handler */
     const containerRef = useRef<HTMLDivElement>(null);
