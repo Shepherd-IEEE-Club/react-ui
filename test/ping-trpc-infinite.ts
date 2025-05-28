@@ -1,12 +1,12 @@
 import { createTRPCProxyClient, httpBatchLink } from '@trpc/client';
+import type { AppRouter } from '@woco/server/appRouter'; // ✅ correct type
 import superjson from 'superjson';
-import type { AppRouter } from '@woco/server/appRouter';
 
 const client = createTRPCProxyClient<AppRouter>({
-    // transformer: superjson, // optional
     links: [
         httpBatchLink({
-            url: 'http://localhost:3001/trpc', // must be /trpc
+            url: 'http://localhost:3001/trpc', // adjust if needed
+            transformer: superjson, // ✅ Required to match the server
         }),
     ],
 });
@@ -15,14 +15,12 @@ async function main() {
     const res = await client.postmarks.infinite.query({
         limit: 10,
         cursor: null,
-        // startYear: 1890,
+        // startYear: 1900,
         // endYear: 1920,
     });
 
-    console.log('✅ Got result:', res.items.length, 'items');
+    console.log('✅ Got result:', res.items.length);
     console.log('➡️ Next cursor:', res.nextCursor);
 }
 
-main().catch(err => {
-    console.error('❌ tRPC error:', err);
-});
+main().catch(err => console.error('❌ tRPC Error:', err));

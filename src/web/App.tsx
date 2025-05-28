@@ -11,6 +11,7 @@ import {Header} from "@woco/web/pages/Header.tsx";
 import LandingPage from "@woco/web/pages/landing.tsx";
 import InfoPage from "@woco/web/pages/info.tsx";
 import {trpc} from "@woco/web/trpc.ts";
+import superjson from "superjson";
 /* ───────────────────────  styling  ─────────────────────── */
 
 const GlobalStyle = createGlobalStyle`
@@ -49,7 +50,10 @@ export default function App() {
         trpc.createClient({
             links: [
                 loggerLink({ enabled: () => true }), // 👈 this must log
-                httpBatchLink({ url: 'http://localhost:3001/trpc' }),
+                httpBatchLink({
+                    url: 'http://localhost:3001/trpc',
+                    transformer: superjson,
+                }),
             ],
         })
     );

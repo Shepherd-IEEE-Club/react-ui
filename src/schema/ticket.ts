@@ -6,14 +6,14 @@ export const TicketChangesSchema = PostmarkSchema
     .omit({ id: true})  // naughty fields
     .partial()  // all fields optional
 
+    // TODO stricter validation
     // for adding and removing images
-    // TODO adding and removing images
-    // .extend({
-    //     images: z.object({
-    //         add: z.array(z.string()).optional(),
-    //         remove: z.array(z.number()).optional(),
-    //     }).optional(),
-    // })
+    .extend({
+        images: z.object({
+            add: z.array(z.number()).optional(),
+            remove: z.array(z.number()).optional(),
+        }).optional()
+    })
 
     // catch empty ticket
     .refine(obj => Object.keys(obj).length > 0, {
@@ -25,9 +25,18 @@ export const TicketSchema = z.object({
     postmark_id: z.number(),
     user_id: z.number(),
 
-    // TODO enum 'pending', 'approved', 'rejected'
-    status: z.number(),
+    status_id: z.number(),
     changes: TicketChangesSchema,
     comment: z.string().optional(),
     created_at: z.date(),
+});
+
+
+// For client mutations
+export const TicketInputSchema = z.object({
+    postmark_id: z.number(),
+    user_id: z.number(),
+    changes: TicketChangesSchema,
+    comment: z.string().optional(),
+    status_id: z.number().optional(),
 });

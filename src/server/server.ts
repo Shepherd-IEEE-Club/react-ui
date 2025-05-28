@@ -1,14 +1,13 @@
 import express from 'express';
 import cors from 'cors';
 import { Sequelize, DataTypes, Op } from 'sequelize';
+import { initDb } from '@woco/db';
+import {appRouter} from "./appRouter.ts";
 
 import * as trpcExpress from '@trpc/server/adapters/express';
+import superjson from "superjson";
 const app = express();
 const port = 3001;
-
-
-// import { PostmarkListSchema } from '@woco/schema';
-import { appRouter } from './appRouter';
 
 
 // Enable CORS so your front end (e.g., Storybook) can access the API
@@ -27,6 +26,11 @@ app.use(
     trpcExpress.createExpressMiddleware({
         router: appRouter,
         createContext: () => ({}),
+        transformer: superjson,
+
+        onError({ error, path }) {
+            console.error(`❌ TRPC error in ${path ?? '<no-path>'}:`, error.message);
+        },
     }),
 );
 
@@ -36,7 +40,7 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../web/dist/index.html'));
 });
 
-import { initDb } from '@woco/db';
+
 // Authenticate the database connection and start the server.
 
 // FIXME Looks stupid
@@ -48,3 +52,5 @@ initDb()
         console.error('DB init failed:', err);
         process.exit(1);
     });
+
+// console.dir(appRouter._def.record, { depth: 5 });
