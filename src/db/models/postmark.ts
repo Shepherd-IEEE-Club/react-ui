@@ -7,6 +7,13 @@ export class PostmarkModel extends Model<
     InferAttributes<PostmarkModel>,
     InferCreationAttributes<PostmarkModel>
 > {
+    declare id: number;
+    declare postmark: string;
+    declare town: string;
+    declare state: string;
+    declare date_seen: string | null;
+    declare size: string | null;
+    declare colors: string | null;
 }
 
 PostmarkModel.init(

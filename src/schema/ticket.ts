@@ -2,7 +2,7 @@ import { z } from 'zod';
 import {PostmarkSchema} from "./postmark.ts";
 
 // ticket shit
-export const TicketChangesSchema = PostmarkSchema
+export const TicketChangesSchema = PostmarkSchema.full
     .omit({ id: true})  // naughty fields
     .partial()  // all fields optional
 
@@ -27,7 +27,7 @@ export const TicketSchema = z.object({
 
     status_id: z.number(),
     changes: TicketChangesSchema,
-    comment: z.string().optional(),
+    comment: z.string().nullable().optional(),
     created_at: z.date(),
 });
 
@@ -40,3 +40,6 @@ export const TicketInputSchema = z.object({
     comment: z.string().optional(),
     status_id: z.number().optional(),
 });
+
+
+export type Ticket = z.infer<typeof TicketSchema>;

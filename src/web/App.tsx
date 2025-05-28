@@ -12,6 +12,7 @@ import LandingPage from "@woco/web/pages/landing.tsx";
 import InfoPage from "@woco/web/pages/info.tsx";
 import {trpc} from "@woco/web/trpc.ts";
 import superjson from "superjson";
+import TicketsPage from "@woco/web/pages/Ticket";
 /* ───────────────────────  styling  ─────────────────────── */
 
 const GlobalStyle = createGlobalStyle`
@@ -70,6 +71,7 @@ export default function App() {
                             <Routes>
                                 <Route path="/" element={<LandingPage/>}/>
                                 <Route path="/search" element={<SearchableList/>}/>
+                                <Route path="/ticket" element={<TicketsPage/>}/>
                                 <Route path="/info" element={<InfoPage/>}/>
                             </Routes>
                         </Container>

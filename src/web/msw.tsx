@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { createTRPCReact } from "@trpc/react-query";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpLink } from "@trpc/client";
-import { AppRouter } from "@woco/server/appRouter.ts"; // Adjust this import to your project
+import { AppRouter } from "@woco/server/appRouter.ts";
+import superjson from "superjson"; // Adjust this import to your project
 
 export const api = createTRPCReact<AppRouter>();
 
@@ -15,6 +16,7 @@ export const TRPCReactProvider = ({ children }: { children: React.ReactNode }) =
             links: [
                 httpLink({
                     url: baseUrl,
+                    transformer: superjson,
                 }),
             ],
         })

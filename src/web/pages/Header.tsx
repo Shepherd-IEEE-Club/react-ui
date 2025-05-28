@@ -12,6 +12,7 @@ export const Header: React.FC = () => (
             <nav className="header-nav">
                 <Link to="/">Home</Link>
                 <Link to="/search">Search</Link>
+                <Link to="/ticket">Ticket</Link>
                 <Link to="/info">Info</Link>
             </nav>
             <div className="header-right">
