@@ -2,17 +2,16 @@ import React from "react";
 import type {Ticket} from "@woco/schema/ticket";
 import {StyledTable} from "@woco/web/style.ts";
 import {TICKET_STATUS_LABELS} from "@woco/web/constants.ts";
-import type {PostmarkSchema} from "@woco/schema/postmark.ts";
+import {PostmarkTableRowSchema} from "@woco/schema/postmark.ts";
 import {z} from "zod";
 
 interface Props {
     tickets: Ticket[];
     // map of relevant postmarks
-    postmarks: Record<number, z.infer<typeof PostmarkSchema.withThumbnail>>;
+    postmarks: Record<number, z.infer<typeof PostmarkTableRowSchema>>;
     loading?: boolean;
     onRowClick: (ticket: Ticket) => void;
 }
-
 
 const TicketTable: React.FC<Props> = ({tickets, postmarks, loading, onRowClick}) => {
     return (

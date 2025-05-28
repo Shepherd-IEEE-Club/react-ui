@@ -9,6 +9,7 @@ export const PostmarkSchema = z.object({
     size: z.string().nullable().optional(),
     colors: z.string().nullable().optional(),
 });
+
 // Postmark with a thumbnail
 export const PostmarkTableRowSchema = PostmarkSchema.extend({
     thumbnail: z.string(),                  // base64 thumbnail
@@ -21,7 +22,10 @@ export const PostmarkImageSchema = z.object({
     thumbnail: z.string(), // thumbnail as base64
 });
 
-
+export const FullImageSchema = z.object({
+    id: z.number(),
+    data: z.string(),
+});
 
 
 
@@ -33,8 +37,8 @@ export const PostmarkImageSchema = z.object({
 // to use like {postmark.id: image}
 // export const ThumbnailImageMap = z.record(z.number(), ThumbnailImageSchema);
 
-export const FullImageSchema = PostmarkImageSchema.pick({
-    id: true,
-    data: true,
-});
+// export const FullImageSchema = PostmarkImageSchema.pick({
+//     id: true,
+//     data: true,
+// });
 // export type FullImageMap = Record<number, z.infer<typeof FullImageSchema>>;

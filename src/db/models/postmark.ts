@@ -1,5 +1,5 @@
 // src/db/models/postmark.ts
-import {DataTypes, Model, InferAttributes, InferCreationAttributes} from 'sequelize';
+import {DataTypes, Model, InferAttributes, InferCreationAttributes, ForeignKey} from 'sequelize';
 import {sequelize} from '../client';
 
 /* ---------- Postmark ---------- */
@@ -38,6 +38,11 @@ export class PostmarkImageModel extends Model<
     InferAttributes<PostmarkImageModel>,
     InferCreationAttributes<PostmarkImageModel>
 > {
+    declare id: number
+    declare postmark_id: ForeignKey<number>;
+    declare data: Buffer;
+    declare thumbnail: String;
+
 }
 
 PostmarkImageModel.init(
@@ -51,6 +56,7 @@ PostmarkImageModel.init(
         },
         //     TODO bytes instead of BS4
         data: {type: DataTypes.BLOB('long'), allowNull: false},
+        thumbnail: {type: DataTypes.STRING}
     },
     {
         sequelize,
