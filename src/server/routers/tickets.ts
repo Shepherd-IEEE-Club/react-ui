@@ -3,9 +3,14 @@ import {router, procedure} from '@woco/server/trpc.ts';
 import { TicketInputSchema, TicketSchema } from '@woco/schema/ticket';
 import { TicketModel } from '@woco/db/models/ticket';
 import {PostmarkImageModel, PostmarkModel} from '@woco/db/models/postmark.ts';
-import {PostmarkSchema} from "@woco/schema/postmark.ts";
+import {PostmarkSchema, PostmarkTableRowSchema} from "@woco/schema/postmark.ts";
 import PostmarkModal from "@woco/web/pages/PostmarkModal";
 import { Op } from 'sequelize';
+
+function extractUniquePostmarkIds(tickets: { postmark_id: number }[]) {
+    return Array.from(new Set(tickets.map(t => t.postmark_id)));
+}
+
 
 export const ticketsRouter = router({
     create: procedure
@@ -51,7 +56,7 @@ export const ticketsRouter = router({
         ).output(
             z.object({
                 tickets: z.array(TicketSchema),
-                postmarks: z.record(PostmarkSchema.withThumbnail),
+                postmarks: z.record(PostmarkTableRowSchema),
             })
         )
         .query(async ({ input }) => {
@@ -66,20 +71,16 @@ export const ticketsRouter = router({
                 where.id = { $gt: cursor }; // simple cursor pagination
             }
 
+
+            // Get tickets
             const tickets = await TicketModel.findAll({
                 where,
-                limit: limit + 1, // one extra to check for next page
-                include: [
-                    { model: PostmarkModel },
-                    // { model: TicketStatusModel, as: 'status' },
-                ],
+                limit: limit + 1,
                 order: [['id', 'ASC']],
             });
 
-            const hasMore = tickets.length > limit;
-            const trimmed = hasMore ? tickets.slice(0, -1) : tickets;
 
-            const resultTickets = trimmed.map((ticket) => {
+            const resultTickets = tickets.map((ticket) => {
                 const t = ticket.toJSON();
                 return {
                     ...t,
@@ -89,36 +90,41 @@ export const ticketsRouter = router({
                 };
             });
 
-            // collect unique postmarks
-            const trimmedIds: number[] = trimmed.map(t => t.postmark_id);
-            const uniquePostmarkIds: number[] = Array.from(new Set(trimmedIds));
+
+            const uniquePostmarkIDs = Array.from(new Set(tickets.map(t => t.postmark_id)));
 
             const foundPostmarks = await PostmarkModel.findAll({
-                where: {
-                    id: {
-                        [Op.in]: uniquePostmarkIds,
-                    },
-                },
-                // FIXME this gets every thumbnail on image
+                where: { id: { [Op.in]: uniquePostmarkIDs } },
                 include: [
                     {
                         model: PostmarkImageModel,
                         as: 'images',
-                        attributes: ['id', 'thumbnail'],
-                        // separate: true,
+                        attributes: ['thumbnail'],
+                        separate: true,
+                        limit: 1,
+                        order: [['id', 'ASC']], // or your preferred order logic
                     },
                 ],
             });
 
-            // FIXME
-            const postmarks: Record<number, any> = {};
-            foundPostmarks.forEach(p => {
-                const raw = p.get();
-                raw.images = raw.images?.map((img: any) => img.get());
-                postmarks[p.id] = raw;
 
+            // TODO how to decide which of postmark's images is thumbnail?
+
+            const postmarks: Record<number, z.input<typeof PostmarkTableRowSchema>> = {};
+
+            foundPostmarks.forEach((p) => {
+                const raw = p.get({ plain: true });
+                const images = (raw.images ?? []).map((img: any) => ({
+                    id: img.id,
+                    thumbnail: img.thumbnail,
+                }));
+
+                postmarks[raw.id] = {
+                    ...raw,
+                    // Only need 1 thumbnail
+                    thumbnail: images[0]?.thumbnail ?? '', // fallback to empty string
+                };
             });
-
 
             const output = {
                 tickets: resultTickets,
@@ -128,7 +134,7 @@ export const ticketsRouter = router({
             const validate = z
                 .object({
                     tickets: z.array(TicketSchema),
-                    postmarks: z.record(PostmarkSchema.withThumbnail),
+                    postmarks: z.record(PostmarkTableRowSchema),
                 })
                 .safeParse(output);
 

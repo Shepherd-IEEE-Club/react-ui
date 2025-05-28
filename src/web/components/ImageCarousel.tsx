@@ -8,8 +8,6 @@ interface Props {
 }
 
 const ImageCarousel: React.FC<Props> = ({ postmark }) => {
-    // const [postmarks, setPostmarks] = useState<Postmark[]>([]);
-    // useBatchImages(postmarks, () => setPostmarks([...postmarks])); // force re-render
     const [postmarks, setPostmarks] = useState<Postmark[]>([postmark]);
 
     useBatchImages(postmarks, () => setPostmarks([...postmarks]));

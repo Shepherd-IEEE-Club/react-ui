@@ -2,7 +2,7 @@ import { z } from 'zod';
 import {PostmarkSchema} from "./postmark.ts";
 
 // ticket shit
-export const TicketChangesSchema = PostmarkSchema.full
+export const TicketChangesSchema = PostmarkSchema
     .omit({ id: true})  // naughty fields
     .partial()  // all fields optional
 

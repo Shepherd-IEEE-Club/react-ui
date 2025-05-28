@@ -19,7 +19,7 @@ const TicketTable: React.FC<Props> = ({tickets, postmarks, loading, onRowClick})
         <StyledTable>
             <thead>
             <tr>
-                <th>ID</th>
+                <th>Image</th>
                 <th>Status</th>
                 <th>Postmark</th>
                 <th>User</th>
@@ -36,14 +36,13 @@ const TicketTable: React.FC<Props> = ({tickets, postmarks, loading, onRowClick})
                 tickets.map((ticket) => {
                     console.log(postmarks)
                     const postmark = postmarks[ticket.postmark_id];
-                    const thumbnail = postmark?.images?.[0]?.thumbnail;
 
                     return (
                         <tr key={ticket.id} onClick={() => onRowClick(ticket)}>
                             <td>
-                                {thumbnail ? (
+                                {postmark.thumbnail ? (
                                     <img
-                                        src={`data:image/jpeg;base64,${thumbnail}`}
+                                        src={`data:image/jpeg;base64,${postmark.thumbnail}`}
                                         alt="thumb"
                                         style={{ width: 40, height: 40, objectFit: "cover", borderRadius: 4 }}
                                     />

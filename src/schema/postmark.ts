@@ -1,48 +1,40 @@
 import {z} from 'zod';
 
-// This sillyness is to prevent mutating and confusion and bugs
-const PostmarkImageSchema = z.object({
-    id: z.number(),
-    // FIXME Naughty .optionals
-    postmark_id: z.number(),
-    data: z.string(),
-    thumbnail: z.string(),
-});
-
-const ThumbnailImageSchema = PostmarkImageSchema.pick(
-    {
-        id: true,
-        thumbnail: true
-    }
-);
-const FullImageSchema = PostmarkImageSchema.pick(
-    {
-        id: true,
-        // postmark_id: true,
-        data: true,
-    }
-);
-
-const BasePostmarkSchema = z.object({
+export const PostmarkSchema = z.object({
     id: z.number(),
     postmark: z.string(),
     town: z.string(),
     state: z.string(),
-    date_seen: z.string().optional(),
-    size: z.string().optional(),
-    colors: z.string().optional(),
+    date_seen: z.string().nullable().optional(),
+    size: z.string().nullable().optional(),
+    colors: z.string().nullable().optional(),
+});
+// Postmark with a thumbnail
+export const PostmarkTableRowSchema = PostmarkSchema.extend({
+    thumbnail: z.string(),                  // base64 thumbnail
 });
 
-// variants
-// this is not a zod object
-export const PostmarkSchema = {
-    full: BasePostmarkSchema.extend({
-        images: z.array(PostmarkImageSchema),
-    }),
-    withThumbnail: BasePostmarkSchema.extend({
-        images: z.array(ThumbnailImageSchema),
-    }),
-    withFullImage: BasePostmarkSchema.extend({
-        images: z.array(FullImageSchema),
-    }),
-};
+export const PostmarkImageSchema = z.object({
+    id: z.number(),
+    postmark_id: z.number(),
+    data: z.string(),      // full image as base64
+    thumbnail: z.string(), // thumbnail as base64
+});
+
+
+
+
+
+// export const ThumbnailImageSchema = PostmarkImageSchema.pick({
+//     id: true,
+//     thumbnail: true,
+// });
+
+// to use like {postmark.id: image}
+// export const ThumbnailImageMap = z.record(z.number(), ThumbnailImageSchema);
+
+export const FullImageSchema = PostmarkImageSchema.pick({
+    id: true,
+    data: true,
+});
+// export type FullImageMap = Record<number, z.infer<typeof FullImageSchema>>;
