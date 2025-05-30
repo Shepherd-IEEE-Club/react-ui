@@ -25,7 +25,13 @@ export const PostmarkImageSchema = z.object({
     thumbnail: z.string(), // thumbnail as base64
 });
 
+
+
 export const FullImageSchema = z.object({
     id: z.number(),
     data: z.string(),
 });
+
+
+export type ImageMap = Record<number, z.infer<typeof PostmarkImageSchema>>;
+export type Postmark = z.infer<typeof PostmarkSchema>;

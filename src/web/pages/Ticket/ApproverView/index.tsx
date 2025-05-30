@@ -1,28 +1,39 @@
-import React, { useState } from "react";
-import { trpc } from "@woco/web/trpc";
-import type { Ticket } from "@woco/schema/ticket";
+import React, {useState} from "react";
+import {trpc} from "@woco/web/trpc";
+import type {Ticket} from "@woco/schema/ticket";
 import TicketTable from "../table";
 import TicketModal from "./modal.tsx";
-import { PostmarkSchema } from "@woco/schema/postmark";
+import DenialReasonModal from "./denialmodal.tsx";
+import {PostmarkSchema} from "@woco/schema/postmark";
 import Detail from "@woco/web/pages/Ticket/Detail.tsx";
+
+// FIXME: use real hooks for these once implemented
+import {useApproveTicket} from "@woco/web/hooks/useApproveTicket";
+import {useDenyTicket} from "@woco/web/hooks/useDenyTicket";
 
 const ApproverView: React.FC = () => {
     const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
+    const [showDenialModal, setShowDenialModal] = useState(false);
 
-    const { data, isLoading, error } = trpc.tickets.mine.useQuery({
+    // FIXME: make this more specific
+    // TODO: share filtering from search page?
+    const {data, isLoading, error} = trpc.tickets.mine.useQuery({
         user_id: 1,
     });
 
     const tickets = data?.tickets ?? [];
     const postmarks = data?.postmarks ?? {};
 
-    const { data: images } = trpc.tickets.images.useQuery(
-        { ticket: selectedTicket! },
-        { enabled: !!selectedTicket }
+    const {data: images} = trpc.tickets.images.useQuery(
+        {ticket: selectedTicket!},
+        {enabled: !!selectedTicket}
     );
 
+    const approve = useApproveTicket();
+    const deny = useDenyTicket();
+
     return (
-        <div style={{ width: "100%", height: "100%", overflowY: "auto" }}>
+        <div style={{width: "100%", height: "100%", overflowY: "auto"}}>
             <TicketTable
                 tickets={tickets}
                 postmarks={postmarks}
@@ -40,13 +51,30 @@ const ApproverView: React.FC = () => {
                         />
                     }
                     onClose={() => setSelectedTicket(null)}
-                    onApprove={() => approveTicket(selectedTicket.id)}
-                    onDeny={() => denyTicket(selectedTicket.id)}
+                    onApprove={() => {
+                        approve.mutate({ticket_id: selectedTicket.id});
+                        setSelectedTicket(null);
+                    }}
+                    onDeny={() => {
+                        setShowDenialModal(true);
+                    }}
                 />
             )}
 
+            {showDenialModal && selectedTicket && (
+                <DenialReasonModal
+                    ticket={selectedTicket}
+                    onClose={() => setShowDenialModal(false)}
+                    onSubmit={
+                        (updatedTicket) => {
+                            deny.mutate(updatedTicket);
+                        }
+                    }
 
-            {error && <p style={{ color: "red" }}>{(error as Error).message}</p>}
+                />
+            )}
+
+            {error && <p style={{color: "red"}}>{(error as Error).message}</p>}
         </div>
     );
 };

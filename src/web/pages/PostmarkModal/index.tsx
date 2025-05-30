@@ -7,10 +7,11 @@ import MakeTicket from "./MakeTicket.tsx";
 import ImageCarousel from '@woco/web/components/ImageCarousel.tsx';
 import Modal from "@woco/web/components/Modal.tsx"; // ✅
 
-import type { Postmark } from "@woco/schema/postmark.ts";
+import type { Postmark, ImageMap } from "@woco/schema/postmark.ts";
 
 interface ModalProps {
-    postmark?: Postmark;
+    postmark: Postmark;
+    images: ImageMap;
     onClose: () => void;
 }
 
@@ -36,14 +37,14 @@ const Content = styled.div`
     flex-direction: column;
 `;
 
-const PostmarkModal: React.FC<ModalProps> = ({ postmark, onClose }) => {
+const PostmarkModal: React.FC<ModalProps> = ({ postmark, images, onClose }) => {
     const [isEditing, setIsEditing] = useState(false);
     const toggleView = () => setIsEditing(prev => !prev);
 
     return (
         <Modal onClose={onClose}>
             <ImageContainer>
-                <ImageCarousel postmark={postmark} />
+                <ImageCarousel postmark={postmark} images={images} />
             </ImageContainer>
             <Content>
                 <Button onClick={toggleView}>Modify</Button>

@@ -1,38 +1,28 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import type { Postmark } from "@woco/schema/postmark.ts";
-import {useBatchImages} from "@woco/web/hooks/useBatchImages.ts";
+import type {ImageMap, Postmark} from "@woco/schema/postmark.ts";
 
 interface Props {
     postmark: Postmark
+    images: ImageMap
 }
 
-const ImageCarousel: React.FC<Props> = ({ postmark }) => {
-    const [postmarks, setPostmarks] = useState<Postmark[]>([postmark]);
-
-    useBatchImages(postmarks, () => setPostmarks([...postmarks]));
-
+const ImageCarousel: React.FC<Props> = ({ postmark, images }) => {
     const [index, setIndex] = useState(0);
-
-
-    const images = postmark.images
-    console.log(images)
-
-    if (!images || images.length === 0) return null;
-
-    const next = () => setIndex((index + 1) % images.length);
-    const prev = () => setIndex((index - 1 + images.length) % images.length);
+    const imageArray = Object.values(images);
+    const next = () => setIndex((index + 1) % imageArray.length);
+    const prev = () => setIndex((index - 1 + imageArray.length) % imageArray.length);
 
     return (
         <CarouselContainer>
             <StyledImage
                 src={`data:image/jpeg;base64,${images[index].data}`}
             />
-            {images.length > 1 && (
+            {imageArray.length > 1 && (
                 <>
                     <ArrowLeft onClick={prev}>←</ArrowLeft>
                     <ArrowRight onClick={next}>→</ArrowRight>
-                    <Counter>{`${index + 1} / ${images.length}`}</Counter>
+                    <Counter>{`${index + 1} / ${imageArray.length}`}</Counter>
                 </>
             )}
         </CarouselContainer>

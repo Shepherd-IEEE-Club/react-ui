@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { Button } from "@woco/web/pages/style.ts";
 
-import type { Postmark } from "@woco/schema/postmark.ts";
+import { Postmark } from "@woco/schema/postmark.ts";
 
 interface ModalProps {
     postmark?: Postmark;

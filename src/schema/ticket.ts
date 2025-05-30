@@ -29,6 +29,7 @@ export const TicketSchema = z.object({
     status_id: z.number(),
     changes: TicketChangesSchema,
     comment: z.string().nullable().optional(),
+    deny_comment: z.string().nullable().optional(),
     created_at: z.date(),
 });
 

@@ -1,7 +1,7 @@
 import {router, procedure} from '@woco/server/trpc.ts';
 import {PostmarkImageModel, PostmarkModel} from '@woco/db/models/postmark.ts';
 import {fetchPaginatedPostmarks, PostmarkFilterSchema} from "../utils/fetchPaginatedPostmarks.ts";
-import {FullImageSchema} from "@woco/schema/postmark.ts";
+import {FullImageSchema, PostmarkSchema} from "@woco/schema/postmark.ts";
 import {z} from "zod";
 
 export const postmarksRouter = router({
@@ -11,16 +11,18 @@ export const postmarksRouter = router({
             return fetchPaginatedPostmarks(input);
         }),
 
-    // postmark id -> array of fullsize b64 images
+    // postmark -> array of fullsize b64 images
     images: procedure
-        .input(z.object({ postmark_id: z.number() }))
+        .input(PostmarkSchema.pick({ id: true })) // Just need id.
         .output(z.array(FullImageSchema))
         .query(async ({ input }) => {
             const images = await PostmarkImageModel.findAll({
                 where: {
-                    postmark_id: input.postmark_id
+                    postmark_id: input.id
                 },
                 attributes: ['id', 'data'],
+
+                // TODO user settable order
                 order: [['id', 'ASC']],
             });
 

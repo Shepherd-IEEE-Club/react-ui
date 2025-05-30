@@ -47,14 +47,16 @@ export const ticketsRouter = router({
         .input(z.object({ticket: TicketSchema}))
         .output(z.array(PostmarkImageSchema))
         .query(async ({input}) => {
-
             const images = await PostmarkImageModel.findAll({
                 where: {
                     [Op.or]: [
                         {ticket_id: input.ticket.id},
                         {postmark_id: input.ticket.postmark_id}
+
                     ]
                 },
+
+                // TODO user settable order
                 order: [['id', 'ASC']],
             });
 
@@ -173,5 +175,34 @@ export const ticketsRouter = router({
             return output;
         }),
 
+
+    approve: procedure
+        .input(z.object({ ticket_id: z.number() }))
+        .mutation(async ({ input }) => {
+            // FIXME image stuff
+            await TicketModel.update({ status_id: 2 }, { where: { id: input.ticket_id } });
+        }),
+
+    deny: procedure
+        .input(
+            TicketSchema.pick({
+                id: true,
+                deny_comment: true,
+            })
+        )
+        .mutation(async ({ input, ctx }) => {
+            // Optionally check auth
+            // if (!ctx.session?.user) throw new Error("Unauthorized");
+            console.log(input)
+
+            await TicketModel.update(
+                {
+                    status_id: 3, // Denied
+                    deny_comment: input.deny_comment, // ✅ correct
+                    // updated_by: ctx.session.user.id,
+                },
+                { where: { id: input.id } }
+            );
+        }),
 
 });

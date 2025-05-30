@@ -3,8 +3,9 @@ import styled from "styled-components";
 import { trpc } from "@woco/web/trpc.ts";
 import PostmarkModal from "@woco/web/pages/PostmarkModal";
 import PostmarksTable from "./table.tsx";
-
-import type { Postmark } from "@woco/schema/postmark.ts";
+//
+// import type { Postmark } from "@woco/schema/postmark.ts";
+// import type {Ticket} from "@woco/schema/ticket.ts";
 
 
 
@@ -74,7 +75,7 @@ const Button = styled.button`
 /* ---------- component ---------- */
 const Search: React.FC = () => {
     /* UI state */
-    const [selectedPostmark, setSelectedPostmark] = useState<Postmark | null>(null);
+    // const [selectedPostmark, setSelectedPostmark] = useState<Postmark | null>(null);
     const [filters, setFilters] = useState<{
         startYear?: number;
         endYear?: number;
@@ -111,15 +112,11 @@ const Search: React.FC = () => {
         }
     }, [data]);
 
-    // useBatchImages(postmarks, () => {
-    //     setPostmarks([...postmarks]); // Triggers React to re-render
-    // });
-
-
-    // const postmarks: Postmark[] = data?.pages.flatMap((p) => p.items) ?? [];
-    // useBatchImages(postmarks);
-    // console.log(postmarks)
-
+    const [selectedPostmark, setSelectedPostmark] = useState<Postmark | null>(null);
+    const {data: images} = trpc.postmarks.images.useQuery(
+        selectedPostmark!,
+        {enabled: !!selectedPostmark}
+    );
 
     /* infinite‑scroll handler */
     const containerRef = useRef<HTMLDivElement>(null);

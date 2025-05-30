@@ -19,8 +19,8 @@ export const useBatchImages = (
         )
     );
 
-    const { data: images = [] } = trpc.postmarks.getImages.useQuery(
-        { ids: imageIds },
+    const { data: images = [] } = trpc.postmarks.images.useQuery(
+        { postmark_id: imageIds },
         {
             enabled: imageIds.length > 0,
             staleTime: Infinity,

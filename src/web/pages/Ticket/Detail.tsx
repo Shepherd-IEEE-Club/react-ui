@@ -108,11 +108,11 @@ const Detail: React.FC<Props> = ({ticket, postmark, images}) => {
                 <p>Created: {new Date(ticket.created_at).toLocaleString()}</p>
 
                 {/*TODO*/}
-                {/*{ticket.denycomment && (*/}
-                {/*    <p style={{ color: 'darkred', fontWeight: 'bold' }}>*/}
-                {/*        Denial Reason: {ticket.denycomment}*/}
-                {/*    </p>*/}
-                {/*)}*/}
+                {ticket.deny_comment && (
+                    <p style={{ color: 'darkred', fontWeight: 'bold' }}>
+                        Denial Reason: {ticket.deny_comment}
+                    </p>
+                )}
 
                 <hr/>
                 <h4>Postmark Comparison</h4>
