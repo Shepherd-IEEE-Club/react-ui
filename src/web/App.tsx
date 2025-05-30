@@ -41,8 +41,16 @@ const Container = styled.div`
     flex-direction: column;
     align-items: center;
     width: 100vw;
-    overflow-y: auto; /* auto feels nicer than “scroll” */
+    overflow-y: auto;
+    
+    > * {
+        width: 100%;
+        max-width: 80vw;
+        padding: 1rem;
+        box-sizing: border-box;
+    }
 `;
+
 
 /* ────────────────────  tRPC / React-Query  ──────────────────── */
 export default function App() {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Button } from '@woco/web/pages/Button.ts';
+import { Button } from '@woco/web/pages/style.ts';
 import { EditableField } from './EditableField.tsx';
 import type { Postmark } from '@woco/schema/postmark.ts';
 

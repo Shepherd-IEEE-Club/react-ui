@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
-import { Button } from "@woco/web/pages/Button.ts";
+import { Button } from "@woco/web/pages/style.ts";
 import Detail from "./Detail.tsx";
 import MakeTicket from "./MakeTicket.tsx";
 import ImageCarousel from '@woco/web/components/ImageCarousel.tsx';

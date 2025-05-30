@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Button } from "@woco/web/pages/Button.ts";
+import { Button } from "@woco/web/pages/style.ts";
 
 import type { Postmark } from "@woco/schema/postmark.ts";
 
@@ -59,6 +59,7 @@ const Detail: React.FC<Props> = ({ postmark, toggleView }) => {
 
             <Button>Revision History</Button>
             <Button onClick={toggleView}>Modify</Button>
+
         </>
     );
 };

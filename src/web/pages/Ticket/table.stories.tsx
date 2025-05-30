@@ -13,7 +13,7 @@ export default meta;
 const sampleTickets: Ticket[] = [
     {
         id: 1,
-        postmark_id: 101,
+        postmark_id: 11,
         user_id: 5,
         status_id: 1,
         changes: {},

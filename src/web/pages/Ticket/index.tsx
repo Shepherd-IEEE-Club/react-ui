@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import SubmitterView from "./SubmitterView";
-// import ApproverView from "./ApproverView";
+import ApproverView from "./ApproverView";
 
 const PageContainer = styled.div`
   display: flex;
@@ -40,7 +40,7 @@ const TicketsPage: React.FC = () => {
                 <TabButton $active={view === "approver"} onClick={() => setView("approver")}>Review Tickets</TabButton>
 
             </Tabs>
-            {/*{view === "submitter" ? <SubmitterView /> : <ApproverView />}*/}
+            {view === "submitter" ? <SubmitterView /> : <ApproverView />}
         </PageContainer>
     );
 };

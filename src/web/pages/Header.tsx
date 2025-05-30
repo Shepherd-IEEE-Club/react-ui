@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from './Button.ts';
+// import { Button } from './style.ts';
 import './header.css';
 
 export const Header: React.FC = () => (
@@ -15,10 +15,10 @@ export const Header: React.FC = () => (
                 <Link to="/ticket">Ticket</Link>
                 <Link to="/info">Info</Link>
             </nav>
-            <div className="header-right">
-                <Button size="small" label="Contact Us" />
-                <Button size="small" label="Log In" />
-            </div>
+            {/*<div className="header-right">*/}
+            {/*    <Button size="small" label="Contact Us" />*/}
+            {/*    <Button size="small" label="Log In" />*/}
+            {/*</div>*/}
         </div>
     </header>
 );

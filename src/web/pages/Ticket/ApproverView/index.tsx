@@ -1,30 +1,28 @@
-import React, {useState} from "react";
-import {trpc} from "@woco/web/trpc";
-import type {Ticket} from "@woco/schema/ticket";
+import React, { useState } from "react";
+import { trpc } from "@woco/web/trpc";
+import type { Ticket } from "@woco/schema/ticket";
 import TicketTable from "../table";
-import TicketModal from "./modal.tsx"; // ✅ correct
-import {PostmarkSchema} from "@woco/schema/postmark.ts";
+import TicketModal from "./modal.tsx";
+import { PostmarkSchema } from "@woco/schema/postmark";
 import Detail from "@woco/web/pages/Ticket/Detail.tsx";
 
-const SubmitterView: React.FC = () => {
+const ApproverView: React.FC = () => {
     const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
 
-    const {data, isLoading, error} = trpc.tickets.mine.useQuery({
+    const { data, isLoading, error } = trpc.tickets.mine.useQuery({
         user_id: 1,
-        limit: 10000,
     });
 
-    // FIXME should blow up
     const tickets = data?.tickets ?? [];
     const postmarks = data?.postmarks ?? {};
 
     const { data: images } = trpc.tickets.images.useQuery(
         { ticket: selectedTicket! },
-        { enabled: !!selectedTicket } // Fetch if selected
+        { enabled: !!selectedTicket }
     );
 
     return (
-        <div style={{width: "100%", height: "100%", overflowY: "auto"}}>
+        <div style={{ width: "100%", height: "100%", overflowY: "auto" }}>
             <TicketTable
                 tickets={tickets}
                 postmarks={postmarks}
@@ -42,14 +40,15 @@ const SubmitterView: React.FC = () => {
                         />
                     }
                     onClose={() => setSelectedTicket(null)}
+                    onApprove={() => approveTicket(selectedTicket.id)}
+                    onDeny={() => denyTicket(selectedTicket.id)}
                 />
             )}
 
 
-
-            {error && <p style={{color: "red"}}>{(error as Error).message}</p>}
+            {error && <p style={{ color: "red" }}>{(error as Error).message}</p>}
         </div>
     );
 };
 
-export default SubmitterView;
+export default ApproverView;
