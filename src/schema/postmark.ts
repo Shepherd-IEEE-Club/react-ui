@@ -26,19 +26,3 @@ export const FullImageSchema = z.object({
     id: z.number(),
     data: z.string(),
 });
-
-
-
-// export const ThumbnailImageSchema = PostmarkImageSchema.pick({
-//     id: true,
-//     thumbnail: true,
-// });
-
-// to use like {postmark.id: image}
-// export const ThumbnailImageMap = z.record(z.number(), ThumbnailImageSchema);
-
-// export const FullImageSchema = PostmarkImageSchema.pick({
-//     id: true,
-//     data: true,
-// });
-// export type FullImageMap = Record<number, z.infer<typeof FullImageSchema>>;
