@@ -1,21 +1,54 @@
 import React from "react";
 import styled from "styled-components";
 import Modal from "@woco/web/components/Modal";
-import type { Ticket } from "@woco/schema/ticket";
-import type { z } from "zod";
-import type { PostmarkSchema, FullImageSchema } from "@woco/schema/postmark";
+import type {Ticket} from "@woco/schema/ticket";
+import type {z} from "zod";
+import type {PostmarkSchema, PostmarkImageSchema} from "@woco/schema/postmark";
+import {TICKET_STATUS_LABELS} from "@woco/web/constants.ts";
+const Block = styled.div`
+    margin: 1.5rem 0;
+`;
+
+const ImageComparison = styled.div`
+    display: flex;
+    gap: 2rem;
+    width: 100%;
+`;
+
+const ImageList = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    width: 100%;
+    box-sizing: border-box;
+`;
+
+
+const Label = styled.div`
+    font-weight: 600;
+    color: #444;
+`;
+
+const Value = styled.div`
+    color: #222;
+`;
+
 
 interface Props {
     ticket: Ticket;
     postmark: z.infer<typeof PostmarkSchema>;
-    images: Record<number, z.infer<typeof FullImageSchema>>;
+    images: Record<number, z.infer<typeof PostmarkImageSchema>>;
     onClose: () => void;
 }
 
 const Section = styled.div`
     padding: 1.5rem;
     font-family: sans-serif;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
 `;
+
 
 const ComparisonRow = styled.div`
     display: grid;
@@ -24,6 +57,8 @@ const ComparisonRow = styled.div`
     padding: 0.75rem 0;
     border-bottom: 1px solid #ddd;
     align-items: start;
+    width: 100%;
+    box-sizing: border-box;
 `;
 
 const ComparisonHeader = styled(ComparisonRow)`
@@ -34,57 +69,50 @@ const ComparisonHeader = styled(ComparisonRow)`
     margin-top: 1rem;
 `;
 
+
 const ChangedCell = styled.div`
     background-color: #fff5cc;
     padding: 0.25rem 0.5rem;
     border-radius: 4px;
 `;
 
-const ImageList = styled.div`
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-`;
 
 const StyledImage = styled.img<{ $removed?: boolean; $added?: boolean }>`
     width: 100px;
     height: auto;
     border-radius: 4px;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-    opacity: ${({ $removed }) => ($removed ? 0.4 : 1)};
-    border: 2px solid
-    ${({ $added, $removed }) =>
+    opacity: ${({$removed}) => ($removed ? 0.4 : 1)};
+    border: 2px solid ${({$added, $removed}) =>
             $added ? "green" : $removed ? "red" : "transparent"};
 `;
 
-const TicketModal: React.FC<Props> = ({ ticket, postmark, images, onClose }) => {
+const TicketModal: React.FC<Props> = ({ticket, postmark, images, onClose}) => {
     const changes = ticket.changes ?? {};
+
+    // FIXME
     const postmarkEntries = Object.entries(postmark).filter(
         ([key]) => key !== "id" && key !== "image"
     );
 
-    const removeIds = new Set(ticket.changes?.images?.remove ?? []);
-    const addIds = new Set(ticket.changes?.images?.add ?? []);
-
-    const allCurrentImages = Object.values(images).filter((img) => !addIds.has(img.id));
-    const proposedImages = [
-        ...Object.values(images).filter((img) => !removeIds.has(img.id)),
-        ...Array.from(addIds)
-            .filter((id) => images[id])
-            .map((id) => images[id]),
-    ];
-    console.log(changes);
 
     return (
         <Modal onClose={onClose}>
             <Section>
                 <h3>Ticket #{ticket.id}</h3>
-                <p>Status: {ticket.status_id}</p>
+                <p>Status: {TICKET_STATUS_LABELS[ticket.status_id]}</p>
                 <p>User ID: {ticket.user_id}</p>
                 <p>Comment: {ticket.comment}</p>
                 <p>Created: {new Date(ticket.created_at).toLocaleString()}</p>
 
-                <hr />
+                {/*TODO*/}
+                {/*{ticket.denycomment && (*/}
+                {/*    <p style={{ color: 'darkred', fontWeight: 'bold' }}>*/}
+                {/*        Denial Reason: {ticket.denycomment}*/}
+                {/*    </p>*/}
+                {/*)}*/}
+
+                <hr/>
                 <h4>Postmark Comparison</h4>
 
                 <ComparisonHeader>
@@ -100,7 +128,7 @@ const TicketModal: React.FC<Props> = ({ ticket, postmark, images, onClose }) => 
 
                     return (
                         <ComparisonRow key={key}>
-                            <div style={{ fontWeight: 600 }}>{key}</div>
+                            <div style={{fontWeight: 600}}>{key}</div>
                             <div>{currentVal ?? <em>None</em>}</div>
                             <div>
                                 {changed ? (
@@ -114,31 +142,45 @@ const TicketModal: React.FC<Props> = ({ ticket, postmark, images, onClose }) => 
                 })}
 
                 <ComparisonRow>
-                    <div style={{ fontWeight: 600 }}>images</div>
+                    <div style={{fontWeight: 600}}>images</div>
+
+                    {/*FIXME ensure proper order*/}
                     <ImageList>
-                        {allCurrentImages.map((img) => (
-                            <StyledImage
-                                key={img.id}
-                                src={`data:image/jpeg;base64,${img.data}`}
-                                alt={`Current Image ${img.id}`}
-                                $removed={removeIds.has(img.id)}
-                            />
-                        ))}
+                        {Object.values(images)
+                            .filter((img) => img.postmark_id != null)
+                            .map((img) => (
+                                <StyledImage
+                                    key={img.id}
+                                    src={`data:image/jpeg;base64,${img.data}`}
+                                />
+                            ))}
                     </ImageList>
+
                     <ImageList>
-                        {proposedImages.map((img) => (
-                            <StyledImage
-                                key={img.id}
-                                src={`data:image/jpeg;base64,${img.data}`}
-                                alt={`Proposed Image ${img.id}`}
-                                $added={addIds.has(img.id)}
-                            />
-                        ))}
+                        {Object.values(images).map((img) => {
+                            // if image is in the removal list, its being removed
+                            const isRemoved = ticket.changes.remove_images?.includes(img.id)
+                            console.log(images)
+                            // if image has a ticket id, it has yet to be added
+                            const isAdded = img.ticket_id != null;
+
+                            return (
+                                <StyledImage
+                                    key={img.id}
+                                    src={`data:image/jpeg;base64,${img.data}`}
+                                    alt={`Proposed Image ${img.id}`}
+                                    $added={isAdded}
+                                    $removed={isRemoved}
+                                />
+                            );
+                        })}
                     </ImageList>
                 </ComparisonRow>
             </Section>
         </Modal>
     );
 };
+// TODO inspect image modal
+
 
 export default TicketModal;

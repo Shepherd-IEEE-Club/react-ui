@@ -9,10 +9,11 @@ export const TicketChangesSchema = PostmarkSchema
     // TODO stricter validation
     // for adding and removing images
     .extend({
-        images: z.object({
-            add: z.array(z.number()).optional(),
-            remove: z.array(z.number()).optional(),
-        }).optional()
+        remove_images: z.array(z.number()).optional(),
+        // images: z.object({
+        //     add: z.array(z.number()).optional(),
+        //
+        // }).optional()
     })
 
     // catch empty ticket

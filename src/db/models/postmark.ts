@@ -1,6 +1,7 @@
 // src/db/models/postmark.ts
 import {DataTypes, Model, InferAttributes, InferCreationAttributes, ForeignKey} from 'sequelize';
 import {sequelize} from '../client';
+import {TicketModel} from "./ticket.ts";
 
 /* ---------- Postmark ---------- */
 export class PostmarkModel extends Model<
@@ -40,8 +41,9 @@ export class PostmarkImageModel extends Model<
 > {
     declare id: number
     declare postmark_id: ForeignKey<number>;
+    declare ticket_id: ForeignKey<number>;
     declare data: Buffer;
-    declare thumbnail: String;
+    declare thumbnail: string;
 
 }
 
@@ -50,9 +52,16 @@ PostmarkImageModel.init(
         id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
         postmark_id: {
             type: DataTypes.INTEGER,
-            allowNull: false,
+            allowNull: true,
             references: {model: 'postmarks', key: 'id'},
-            onDelete: 'CASCADE',
+            // onDelete: 'CASCADE',
+        //     TODO
+        },
+        ticket_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            references: {model: 'tickets', key: 'id'},
+            // onDelete: 'CASCADE',
         },
         //     TODO bytes instead of BS4
         data: {type: DataTypes.BLOB('long'), allowNull: false},
@@ -69,9 +78,21 @@ PostmarkModel.hasMany(PostmarkImageModel, {
     foreignKey: 'postmark_id',
     as: 'images',
 });
+
 PostmarkImageModel.belongsTo(PostmarkModel, {
     foreignKey: 'postmark_id',
 });
+
+//FIXME
+
+// TicketModel.hasMany(PostmarkImageModel, {
+//     foreignKey: 'ticket_id',
+//     as: 'images',
+// });
+//
+// PostmarkImageModel.belongsTo(TicketModel, {
+//     foreignKey: 'ticket_id',
+// });
 
 
 export {sequelize};

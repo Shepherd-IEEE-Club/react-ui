@@ -1,11 +1,11 @@
-import { z } from 'zod';
+import {z} from 'zod';
 import {router, procedure} from '@woco/server/trpc.ts';
-import { TicketInputSchema, TicketSchema } from '@woco/schema/ticket';
-import { TicketModel } from '@woco/db/models/ticket';
+import {TicketInputSchema, TicketSchema} from '@woco/schema/ticket';
+import {TicketModel} from '@woco/db/models/ticket';
 import {PostmarkImageModel, PostmarkModel} from '@woco/db/models/postmark.ts';
-import {PostmarkSchema, PostmarkTableRowSchema} from "@woco/schema/postmark.ts";
+import {FullImageSchema, PostmarkImageSchema, PostmarkSchema, PostmarkTableRowSchema} from "@woco/schema/postmark.ts";
 import PostmarkModal from "@woco/web/pages/PostmarkModal";
-import { Op } from 'sequelize';
+import {Op} from 'sequelize';
 
 function extractUniquePostmarkIds(tickets: { postmark_id: number }[]) {
     return Array.from(new Set(tickets.map(t => t.postmark_id)));
@@ -16,7 +16,7 @@ export const ticketsRouter = router({
     create: procedure
         .input(TicketInputSchema)
         .output(TicketSchema)
-        .mutation(async ({ input }) => {
+        .mutation(async ({input}) => {
             const ticket = await TicketModel.create({
                 ...input,
                 status_id: input.status_id ?? 1,
@@ -27,8 +27,6 @@ export const ticketsRouter = router({
         }),
 
 
-
-
     getAll: procedure.query(async () => {
         return await TicketModel.findAll({
             order: [['created_at', 'DESC']],
@@ -36,13 +34,38 @@ export const ticketsRouter = router({
     }),
 
     byPostmark: procedure
-        .input(z.object({ postmark_id: z.number() }))
-        .query(async ({ input }) => {
+        .input(z.object({postmark_id: z.number()}))
+        .query(async ({input}) => {
             return await TicketModel.findAll({
-                where: { postmark_id: input.postmark_id },
+                where: {postmark_id: input.postmark_id},
                 order: [['created_at', 'DESC']],
             });
         }),
+
+    // get images for a ticket (postmark's and changes)
+    images: procedure
+        .input(z.object({ticket: TicketSchema}))
+        .output(z.array(PostmarkImageSchema))
+        .query(async ({input}) => {
+
+            const images = await PostmarkImageModel.findAll({
+                where: {
+                    [Op.or]: [
+                        {ticket_id: input.ticket.id},
+                        {postmark_id: input.ticket.postmark_id}
+                    ]
+                },
+                order: [['id', 'ASC']],
+            });
+
+            console.log(images)
+
+            return images.map(img => ({
+                ...img.get({ plain: true }),
+                data: img.data.toString('base64'),
+            }));
+        }),
+
 
     // paginated for future
     mine: procedure
@@ -59,7 +82,7 @@ export const ticketsRouter = router({
                 postmarks: z.record(PostmarkTableRowSchema),
             })
         )
-        .query(async ({ input }) => {
+        .query(async ({input}) => {
             const limit = input.limit;
             const cursor = input.cursor;
 
@@ -68,7 +91,7 @@ export const ticketsRouter = router({
             };
 
             if (cursor) {
-                where.id = { $gt: cursor }; // simple cursor pagination
+                where.id = {$gt: cursor}; // simple cursor pagination
             }
 
 
@@ -94,7 +117,7 @@ export const ticketsRouter = router({
             const uniquePostmarkIDs = Array.from(new Set(tickets.map(t => t.postmark_id)));
 
             const foundPostmarks = await PostmarkModel.findAll({
-                where: { id: { [Op.in]: uniquePostmarkIDs } },
+                where: {id: {[Op.in]: uniquePostmarkIDs}},
                 include: [
                     {
                         model: PostmarkImageModel,
@@ -113,7 +136,7 @@ export const ticketsRouter = router({
             const postmarks: Record<number, z.input<typeof PostmarkTableRowSchema>> = {};
 
             foundPostmarks.forEach((p) => {
-                const raw = p.get({ plain: true });
+                const raw = p.get({plain: true});
                 const images = (raw.images ?? []).map((img: any) => ({
                     id: img.id,
                     thumbnail: img.thumbnail,
@@ -140,11 +163,12 @@ export const ticketsRouter = router({
 
             if (!validate.success) {
                 console.error('❌ Output validation failed:');
-                console.dir(validate.error.format(), { depth: null });
+                console.dir(validate.error.format(), {depth: null});
                 throw new Error('Validation failed');
             }
 
             return output;
         }),
+
 
 });

@@ -19,9 +19,7 @@ async function main() {
         changes: {
             town: 'Newtown',
             colors: 'red and blue',
-            images: {
-                add: [1,2]
-            }
+            remove_images: [1, 2]
         },
         comment: 'Corrected town and added colors',
     };

@@ -17,7 +17,10 @@ export const PostmarkTableRowSchema = PostmarkSchema.extend({
 
 export const PostmarkImageSchema = z.object({
     id: z.number(),
-    postmark_id: z.number(),
+
+    // FIXME can this be one or the other maybe pretty please
+    postmark_id: z.number().nullable(),
+    ticket_id: z.number().nullable(),
     data: z.string(),      // full image as base64
     thumbnail: z.string(), // thumbnail as base64
 });

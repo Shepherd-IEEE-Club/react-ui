@@ -17,11 +17,9 @@ const SubmitterView: React.FC = () => {
     const tickets = data?.tickets ?? [];
     const postmarks = data?.postmarks ?? {};
 
-    const {data: images} = trpc.postmarks.images.useQuery(
-        {postmark_id: selectedTicket?.postmark_id ?? -1},
-        {
-            enabled: !!selectedTicket, // only fetch when ticket is selected
-        }
+    const { data: images } = trpc.tickets.images.useQuery(
+        { ticket: selectedTicket! },
+        { enabled: !!selectedTicket } // Fetch if selected
     );
 
     return (
