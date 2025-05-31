@@ -7,9 +7,8 @@ import DenialReasonModal from "./denialmodal.tsx";
 import {PostmarkSchema} from "@woco/schema/postmark";
 import Detail from "@woco/web/pages/Ticket/Detail.tsx";
 
-// FIXME: use real hooks for these once implemented
-import {useApproveTicket} from "@woco/web/hooks/useApproveTicket";
-import {useDenyTicket} from "@woco/web/hooks/useDenyTicket";
+import {useApproveTicket} from "@woco/web/hooks/useApproveTicket.ts";
+import {useDenyTicket} from "@woco/web/hooks/useDenyTicket.ts";
 
 const ApproverView: React.FC = () => {
     const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
@@ -73,8 +72,6 @@ const ApproverView: React.FC = () => {
 
                 />
             )}
-
-            {error && <p style={{color: "red"}}>{(error as Error).message}</p>}
         </div>
     );
 };

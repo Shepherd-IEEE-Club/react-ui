@@ -47,12 +47,8 @@ const PostmarkModal: React.FC<ModalProps> = ({ postmark, images, onClose }) => {
                 <ImageCarousel postmark={postmark} images={images} />
             </ImageContainer>
             <Content>
-                <Button onClick={toggleView}>Modify</Button>
-                {isEditing ? (
-                    <MakeTicket postmark={postmark} toggleview={toggleView} />
-                ) : (
-                    <Detail postmark={postmark} toggleView={toggleView} />
-                )}
+                <Detail postmark={postmark} images={images} />
+                <Button onClick={toggleView}>Create Ticket</Button>
             </Content>
         </Modal>
     );
