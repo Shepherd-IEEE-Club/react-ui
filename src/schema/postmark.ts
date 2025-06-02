@@ -33,5 +33,8 @@ export const FullImageSchema = z.object({
 });
 
 
+// export const ImageMapSchema = z.record(z.number(), FullImageSchema);
 export type ImageMap = Record<number, z.infer<typeof PostmarkImageSchema>>;
+
+
 export type Postmark = z.infer<typeof PostmarkSchema>;

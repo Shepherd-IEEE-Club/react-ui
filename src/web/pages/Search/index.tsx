@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { trpc } from "@woco/web/trpc.ts";
 import PostmarkModal from "@woco/web/pages/PostmarkModal";
 import PostmarksTable from "./table.tsx";
+import {Postmark} from "@woco/schema/postmark.ts";
 //
 // import type { Postmark } from "@woco/schema/postmark.ts";
 // import type {Ticket} from "@woco/schema/ticket.ts";
@@ -14,7 +15,7 @@ import PostmarksTable from "./table.tsx";
 // TODO maybe get every postmark, then lazy load thumbnails?
 
 /** Pagination page size */
-const PAGE_SIZE = 2000;
+const PAGE_SIZE = 50;
 
 /* ---------- styled‑components ---------- */
 const Container = styled.div`
@@ -74,6 +75,7 @@ const Button = styled.button`
 
 /* ---------- component ---------- */
 const Search: React.FC = () => {
+
     /* UI state */
     // const [selectedPostmark, setSelectedPostmark] = useState<Postmark | null>(null);
     const [filters, setFilters] = useState<{
@@ -101,7 +103,9 @@ const Search: React.FC = () => {
             keepPreviousData: true,
         }
     );
+
     const [postmarks, setPostmarks] = useState<Postmark[]>([]);
+
 
     // Update postmarks state when data changes
     useEffect(() => {
@@ -113,9 +117,12 @@ const Search: React.FC = () => {
     }, [data]);
 
     const [selectedPostmark, setSelectedPostmark] = useState<Postmark | null>(null);
-    const {data: images} = trpc.postmarks.images.useQuery(
-        selectedPostmark!,
-        {enabled: !!selectedPostmark}
+
+
+
+    const { data: imageMap } = trpc.postmarks.images.useQuery(
+        { id: selectedPostmark?.id},
+        { enabled: !!selectedPostmark }
     );
 
     /* infinite‑scroll handler */
@@ -206,8 +213,8 @@ const Search: React.FC = () => {
             <PostmarksTable postmarks={postmarks} onRowClick={setSelectedPostmark} loading={isLoading} />
 
             {/* modal */}
-            {selectedPostmark && (
-                <PostmarkModal postmark={selectedPostmark} onClose={() => setSelectedPostmark(null)} />
+            {selectedPostmark && imageMap && (
+                <PostmarkModal postmark={selectedPostmark} images={imageMap} onClose={() => setSelectedPostmark(null)} />
             )}
 
             {/* load‑more marker for screen‑readers / debug */}

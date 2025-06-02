@@ -104,14 +104,19 @@ const Detail: React.FC<Props> = ({postmark, images}) => {
                 <div>Field</div>
                 <div>Current</div>
             </Header>
-            {postmarkEntries.map(([key, currentVal]) => {
-                return (
-                    <Row key={key}>
-                        <div style={{fontWeight: 600}}>{key}</div>
-                        <div>{currentVal ?? <em>None</em>}</div>
-                    </Row>
-                );
-            })}
+            {postmarkEntries.map(([key, currentVal]) => (
+                <Row key={key}>
+                    <div style={{ fontWeight: 600 }}>{key}</div>
+                    <div>
+                        {currentVal == null
+                            ? <em>None</em>
+                            : typeof currentVal === "object"
+                                ? "[object]"
+                                : currentVal}
+                    </div>
+                </Row>
+            ))}
+
 
             <Row>
                 <div style={{fontWeight: 600}}>images</div>
