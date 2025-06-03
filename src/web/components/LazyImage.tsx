@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import type {ImageMap} from "@woco/schema/postmark.ts";
+import styled from "styled-components";
 
 interface LazyImageProps {
     imageMapPromise: Promise<ImageMap>;
@@ -7,7 +8,7 @@ interface LazyImageProps {
     fallback?: string;
 }
 
-export const LazyImage: React.FC<LazyImageProps> = ({ imageMapPromise, imageId, fallback = "" }) => {
+export const LazyImage: React.FC<LazyImageProps> = ({imageMapPromise, imageId, fallback = ""}) => {
     const [src, setSrc] = useState<string | null>(null);
     console.log(imageMapPromise)
 
@@ -24,7 +25,15 @@ export const LazyImage: React.FC<LazyImageProps> = ({ imageMapPromise, imageId, 
         };
     }, [imageMapPromise, imageId]);
 
-    return <img src={src ?? fallback} alt={`Image ${imageId}`} />;
+    // FIXME naughty cant figure out how to not do it like this
+    const StyledImg = styled.img`
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    `;
+
+    return <StyledImg src={src ?? fallback} alt={`Image ${imageId}`} />;
+
 };
 
 export default LazyImage;
