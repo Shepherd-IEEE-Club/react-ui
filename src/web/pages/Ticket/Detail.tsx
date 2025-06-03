@@ -3,14 +3,14 @@ import styled from "styled-components";
 import Modal from "@woco/web/components/Modal.tsx";
 import type {Ticket} from "@woco/schema/ticket.ts";
 import type {z} from "zod";
-import type {PostmarkSchema, PostmarkImageSchema} from "@woco/schema/postmark.ts";
+import type {PostmarkSchema, PostmarkImageSchema, ImageMap} from "@woco/schema/postmark.ts";
 import {TICKET_STATUS_LABELS} from "@woco/web/constants.ts";
 
 
 interface Props {
     ticket: Ticket;
     postmark: z.infer<typeof PostmarkSchema>;
-    images: Record<number, z.infer<typeof PostmarkImageSchema>>;
+    images: Promise<ImageMap>;
 }
 
 const Block = styled.div`

@@ -12,7 +12,7 @@ import type {z} from "zod";
 
 interface ModalProps {
     postmark: Postmark;
-    images: Record<number, z.infer<typeof PostmarkImageSchema>>;
+    imageMapPromise: Promise<ImageMap>;
     onClose: () => void;
 }
 
@@ -38,7 +38,7 @@ const Content = styled.div`
     flex-direction: column;
 `;
 
-const PostmarkModal: React.FC<ModalProps> = ({ postmark, images, onClose }) => {
+const PostmarkModal: React.FC<ModalProps> = ({ postmark, imageMapPromise, onClose }) => {
     console.log('modal created')
     const [isEditing, setIsEditing] = useState(false);
     const toggleView = () => setIsEditing(prev => !prev);
@@ -46,10 +46,10 @@ const PostmarkModal: React.FC<ModalProps> = ({ postmark, images, onClose }) => {
     return (
         <Modal onClose={onClose}>
             <ImageContainer>
-                <ImageCarousel postmark={postmark} images={images} />
+                <ImageCarousel postmark={postmark} images={imageMapPromise} />
             </ImageContainer>
             <Content>
-                <Detail postmark={postmark} images={images} />
+                <Detail postmark={postmark} images={imageMapPromise} />
                 <Button onClick={toggleView}>Create Ticket</Button>
             </Content>
         </Modal>

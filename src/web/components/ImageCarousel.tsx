@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import type {ImageMap, Postmark} from "@woco/schema/postmark.ts";
+import { LazyImage } from "@woco/web/components/LazyImage.tsx"
 
 interface Props {
     postmark: Postmark
-    images: ImageMap
+    images: Promise<ImageMap>;
 }
 
 const ImageCarousel: React.FC<Props> = ({ postmark, images }) => {
@@ -15,8 +16,9 @@ const ImageCarousel: React.FC<Props> = ({ postmark, images }) => {
 
     return (
         <CarouselContainer>
-            <StyledImage
-                src={`data:image/jpeg;base64,${images[index].data}`}
+            <LazyImage
+                imageId ={index}
+                imageMapPromise={images}
             />
             {imageArray.length > 1 && (
                 <>

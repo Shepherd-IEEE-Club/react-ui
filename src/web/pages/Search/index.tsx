@@ -4,6 +4,7 @@ import { trpc } from "@woco/web/trpc.ts";
 import PostmarkModal from "@woco/web/pages/PostmarkModal";
 import PostmarksTable from "./table.tsx";
 import {Postmark} from "@woco/schema/postmark.ts";
+import { trpcClient} from "@woco/web/trpc.ts";
 //
 // import type { Postmark } from "@woco/schema/postmark.ts";
 // import type {Ticket} from "@woco/schema/ticket.ts";
@@ -119,11 +120,13 @@ const Search: React.FC = () => {
     const [selectedPostmark, setSelectedPostmark] = useState<Postmark | null>(null);
 
 
+    // let imageMapPromise: Promise<any> | undefined;
+    // if (selectedPostmark) {
+    //     const imageMapPromise = trpcClient.postmarks.images.query({
+    //         id: selectedPostmark.id,
+    //     });
+    // }
 
-    const { data: imageMap } = trpc.postmarks.images.useQuery(
-        { id: selectedPostmark?.id},
-        { enabled: !!selectedPostmark }
-    );
 
     /* infinite‑scroll handler */
     const containerRef = useRef<HTMLDivElement>(null);
@@ -213,8 +216,12 @@ const Search: React.FC = () => {
             <PostmarksTable postmarks={postmarks} onRowClick={setSelectedPostmark} loading={isLoading} />
 
             {/* modal */}
-            {selectedPostmark && imageMap && (
-                <PostmarkModal postmark={selectedPostmark} images={imageMap} onClose={() => setSelectedPostmark(null)} />
+            {selectedPostmark && (
+                <PostmarkModal
+                    postmark={selectedPostmark}
+                    imageMapPromise={trpcClient.postmarks.images.query({ id: selectedPostmark.id })}
+                    onClose={() => setSelectedPostmark(null)}
+                />
             )}
 
             {/* load‑more marker for screen‑readers / debug */}
