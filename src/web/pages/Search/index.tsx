@@ -120,14 +120,6 @@ const Search: React.FC = () => {
     const [selectedPostmark, setSelectedPostmark] = useState<Postmark | null>(null);
 
 
-    // let imageMapPromise: Promise<any> | undefined;
-    // if (selectedPostmark) {
-    //     const imageMapPromise = trpcClient.postmarks.images.query({
-    //         id: selectedPostmark.id,
-    //     });
-    // }
-
-
     /* infinite‑scroll handler */
     const containerRef = useRef<HTMLDivElement>(null);
     const handleScroll = useCallback(
@@ -232,6 +224,7 @@ const Search: React.FC = () => {
 };
 
 export default Search;
+
 
 //TODO infinite scroll does not work when viewing search indivdiaully in storybook
 // FIXME filtering fucked up

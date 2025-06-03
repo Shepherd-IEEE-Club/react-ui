@@ -89,3 +89,6 @@ export default function App() {
         </trpc.Provider>
     )
 }
+
+
+//  FIXME implement modalhost where all modals live and can stack up, (search page lags atm)

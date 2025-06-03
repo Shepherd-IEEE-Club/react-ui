@@ -39,7 +39,7 @@ const Content = styled.div`
 `;
 
 const PostmarkModal: React.FC<ModalProps> = ({ postmark, imageMapPromise, onClose }) => {
-    console.log('modal created')
+    console.log('modal created', imageMapPromise, postmark)
     const [isEditing, setIsEditing] = useState(false);
     const toggleView = () => setIsEditing(prev => !prev);
 

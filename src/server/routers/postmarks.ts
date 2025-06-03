@@ -7,6 +7,7 @@ import {
 } from "../utils/fetchPaginatedPostmarks.ts";
 import {FullImageSchema, ImageMapSchema, PostmarkImageSchema, PostmarkSchema} from "@woco/schema/postmark.ts";
 import {z} from "zod";
+import {Op} from "sequelize";
 
 export const postmarksRouter = router({
     infinite: procedure

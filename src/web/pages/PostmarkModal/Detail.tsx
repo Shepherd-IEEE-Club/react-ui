@@ -3,13 +3,15 @@ import styled from "styled-components";
 import Modal from "@woco/web/components/Modal.tsx";
 import type {Ticket} from "@woco/schema/ticket.ts";
 import type {z} from "zod";
-import type {PostmarkSchema, PostmarkImageSchema} from "@woco/schema/postmark.ts";
+import type {PostmarkSchema, PostmarkImageSchema, ImageMap} from "@woco/schema/postmark.ts";
 import {TICKET_STATUS_LABELS} from "@woco/web/constants.ts";
+import LazyImage from "@woco/web/components/LazyImage.tsx";
+import {ImageGallery} from "@woco/web/components/ImageGallery.tsx";
 
 
 interface Props {
     postmark: z.infer<typeof PostmarkSchema>;
-    images: Record<number, z.infer<typeof PostmarkImageSchema>>;
+    imageMapPromise: Promise<ImageMap>;
 }
 
 const Block = styled.div`
@@ -28,6 +30,14 @@ const ImageList = styled.div`
     gap: 0.5rem;
     width: 100%;
     box-sizing: border-box;
+
+
+    img {
+        max-width: 100%;
+        max-height: 400px;
+        object-fit: contain;
+        display: block;
+    }
 `;
 
 
@@ -122,15 +132,21 @@ const Detail: React.FC<Props> = ({postmark, images}) => {
                 <div style={{fontWeight: 600}}>images</div>
 
                 {/*FIXME ensure proper order*/}
+                {/*<ImageList imagesPromise={images}></ImageList>*/}
                 <ImageList>
-                    {Object.values(images)
-                        .filter((img) => img.postmark_id != null)
-                        .map((img) => (
-                            <StyledImage
-                                key={img.id}
-                                src={`data:image/jpeg;base64,${img.data}`}
-                            />
-                        ))}
+                    <ImageGallery imagesPromise={images}></ImageGallery>
+                    {/*{*/}
+                    {/*    Object.values(images)*/}
+                    {/*    .filter((img) => img.postmark_id != null)*/}
+                    {/*    .map((img) => (*/}
+                    {/*        <LazyImage*/}
+                    {/*            imageId={img.id}*/}
+                    {/*            imageMapPromise={ images}*/}
+
+                    {/*            // key={img.id}*/}
+                    {/*            // src={`data:image/jpeg;base64,${img.data}`}*/}
+                    {/*        />*/}
+                    {/*    ))}*/}
                 </ImageList>
 
             </Row>
