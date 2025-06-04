@@ -5,6 +5,41 @@ import {TICKET_STATUS_LABELS} from "@woco/web/constants.ts";
 import {PostmarkTableRowSchema} from "@woco/schema/postmark.ts";
 import {z} from "zod";
 
+
+interface FilterButtonsProps<T extends string | number> {
+    value: T;
+    onChange: (val: T) => void;
+    options: { label: string; value: T }[];
+}
+
+export const FilterButtons = <T extends string | number>(
+    {
+        value,
+        onChange,
+        options,
+    }: FilterButtonsProps<T>) => (
+
+    <div style={{display: "flex", gap: "0.5rem", margin: "1rem 0"}}>
+        {options.map(({label, value: v}) => (
+            <button
+                key={label}
+                onClick={() => onChange(v)}
+                style={{
+                    padding: "0.5rem 1rem",
+                    borderRadius: "4px",
+                    border: "1px solid #ccc",
+                    backgroundColor: value === v ? "#007bff" : "#f0f0f0",
+                    color: value === v ? "white" : "black",
+                    cursor: "pointer",
+                }}
+            >
+                {label}
+            </button>
+        ))}
+    </div>
+);
+
+
 interface Props {
     tickets: Ticket[];
     // map of relevant postmarks
@@ -43,7 +78,7 @@ const TicketTable: React.FC<Props> = ({tickets, postmarks, loading, onRowClick})
                                     <img
                                         src={`data:image/jpeg;base64,${postmark.thumbnail}`}
                                         alt="thumb"
-                                        style={{ width: 40, height: 40, objectFit: "cover", borderRadius: 4 }}
+                                        style={{width: 40, height: 40, objectFit: "cover", borderRadius: 4}}
                                     />
                                 ) : (
                                     "—"

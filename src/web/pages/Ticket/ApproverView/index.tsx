@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {trpc} from "@woco/web/trpc";
 import type {Ticket} from "@woco/schema/ticket";
-import TicketTable from "../table";
+import TicketTable, {FilterButtons} from "../table";
 import TicketModal from "./modal.tsx";
 import DenialReasonModal from "./denialmodal.tsx";
 import {PostmarkSchema} from "@woco/schema/postmark";
@@ -31,10 +31,34 @@ const ApproverView: React.FC = () => {
     const approve = useApproveTicket();
     const deny = useDenyTicket();
 
+    type status_options = number | "all";
+    const [statusFilter, setStatusFilter] = useState<status_options>(1);
+
+    const filteredTickets = tickets.filter((t) => {
+        if (statusFilter === "all") return true;
+        return t.status_id === statusFilter;
+    });
+
+    const statusButtons: { label: string; value: status_options }[] = [
+        {label: "Pending", value: 1},
+        {label: "Approved", value: 2},
+        {label: "Rejected", value: 3},
+        {label: "All", value: "all"},
+    ];
+
+
     return (
         <div style={{width: "100%", height: "100%", overflowY: "auto"}}>
+
+            <FilterButtons
+                value={statusFilter}
+                onChange={setStatusFilter}
+                options={statusButtons}
+            />
+
+
             <TicketTable
-                tickets={tickets}
+                tickets={filteredTickets}
                 postmarks={postmarks}
                 onRowClick={setSelectedTicket}
                 loading={isLoading}
