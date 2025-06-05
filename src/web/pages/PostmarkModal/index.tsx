@@ -9,6 +9,7 @@ import Modal from "@woco/web/components/Modal.tsx"; // ✅
 
 import type {Postmark, ImageMap, PostmarkImageSchema} from "@woco/schema/postmark.ts";
 import type {z} from "zod";
+import Creation from "@woco/web/pages/Ticket/Creation.tsx";
 
 interface ModalProps {
     postmark: Postmark;
@@ -42,18 +43,27 @@ const PostmarkModal: React.FC<ModalProps> = ({ postmark, imageMapPromise, onClos
     console.log('modal created', imageMapPromise, postmark)
     const [isEditing, setIsEditing] = useState(false);
     const toggleView = () => setIsEditing(prev => !prev);
+    const [showTicketModal, setShowTicketModal] = useState(false);
 
-    return (
+
+    return showTicketModal ? (
+        <Creation
+            postmark={postmark}
+            images={imageMapPromise}
+            onClose={() => setShowTicketModal(false)}
+        />
+    ) : (
         <Modal onClose={onClose}>
             <ImageContainer>
                 <ImageCarousel postmark={postmark} images={imageMapPromise} />
             </ImageContainer>
             <Content>
                 <Detail postmark={postmark} images={imageMapPromise} />
-                <Button onClick={toggleView}>Create Ticket</Button>
+                <Button onClick={() => setShowTicketModal(true)}>Create Ticket</Button>
             </Content>
         </Modal>
     );
+
 };
 
 export default PostmarkModal;

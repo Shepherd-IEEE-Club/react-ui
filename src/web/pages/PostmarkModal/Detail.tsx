@@ -135,18 +135,6 @@ const Detail: React.FC<Props> = ({postmark, images}) => {
                 {/*<ImageList imagesPromise={images}></ImageList>*/}
                 <ImageList>
                     <ImageGallery imagesPromise={images}></ImageGallery>
-                    {/*{*/}
-                    {/*    Object.values(images)*/}
-                    {/*    .filter((img) => img.postmark_id != null)*/}
-                    {/*    .map((img) => (*/}
-                    {/*        <LazyImage*/}
-                    {/*            imageId={img.id}*/}
-                    {/*            imageMapPromise={ images}*/}
-
-                    {/*            // key={img.id}*/}
-                    {/*            // src={`data:image/jpeg;base64,${img.data}`}*/}
-                    {/*        />*/}
-                    {/*    ))}*/}
                 </ImageList>
 
             </Row>
