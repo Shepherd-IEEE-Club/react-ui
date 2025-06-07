@@ -14,8 +14,8 @@ import {modalManager} from "@woco/web/pages/ModalManager.tsx";
 interface Props {
     ticket?: Ticket | null; // Optionally pass in existing ticket
     postmark: z.infer<typeof PostmarkSchema>;
-    images: Promise<ImageMap>;
-    onClose: () => void;
+    imageMapPromise: Promise<ImageMap>;
+    // onClose: () => void;
 }
 
 
@@ -104,8 +104,8 @@ const Wrapper = styled.div`
 `;
 
 
-const Detail: React.FC<Props> = ({ticket, postmark, images, onClose}) => {
-
+const Creation: React.FC<Props> = ({ticket, postmark, imageMapPromise}) => {
+    console.log(ticket?.changes)
     // const changes = ticket.changes ?? {};
     const [changes, setChanges] = useState<Record<string, any>>(ticket?.changes ?? {});
 
@@ -127,7 +127,7 @@ const Detail: React.FC<Props> = ({ticket, postmark, images, onClose}) => {
 
 
     return (
-        <Modal onClose={onClose}>
+        <Modal>
             <Wrapper>
 
                 <Section>
@@ -245,7 +245,7 @@ const Detail: React.FC<Props> = ({ticket, postmark, images, onClose}) => {
 
                         {/*FIXME ensure proper order*/}
                         <ImageList>
-                            {Object.values(images)
+                            {Object.values(imageMapPromise)
                                 .filter((img) => img.postmark_id != null)
                                 .map((img) => (
                                     <StyledImage
@@ -325,4 +325,4 @@ const Detail: React.FC<Props> = ({ticket, postmark, images, onClose}) => {
 // TODO inspect image modal
 
 
-export default Detail;
+export default Creation;

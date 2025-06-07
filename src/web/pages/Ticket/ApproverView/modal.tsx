@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useMemo} from "react";
 import styled from "styled-components";
 import Modal from "@woco/web/components/Modal.tsx";
 import {Button} from "@woco/web/pages/style.ts";
@@ -10,12 +10,11 @@ import DenialReasonModal from "@woco/web/pages/Ticket/ApproverView/denialmodal.t
 import {useApproveTicket} from "@woco/web/hooks/useApproveTicket.ts";
 import {useDenyTicket} from "@woco/web/hooks/useDenyTicket.ts";
 import {modalManager} from "@woco/web/pages/ModalManager.tsx";
+import {trpcClient} from "@woco/web/trpc.ts";
 
 interface Props {
     ticket: Ticket;
     postmark: z.infer<typeof PostmarkSchema>;
-    // onApprove?: () => void;
-    // onDeny?: () => void;
 }
 
 const Wrapper = styled.div`
@@ -49,12 +48,17 @@ const TicketModal: React.FC<Props> = ({postmark, ticket}) => {
     const approve = useApproveTicket();
     const deny = useDenyTicket();
 
+    const imageMapPromise = useMemo(() => {
+        return trpcClient.tickets.images.query({ticket});
+    }, [ticket.id]);
+
     return (
         <Modal>
             <Wrapper>
                 <Detail
                     ticket={ticket}
                     postmark={postmark}
+                    imageMapPromise={imageMapPromise}
                 />
 
 

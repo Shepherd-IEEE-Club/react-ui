@@ -49,8 +49,8 @@ const PostmarkModal: React.FC<ModalProps> = ({ postmark, imageMapPromise, onClos
     return showTicketModal ? (
         <Creation
             postmark={postmark}
-            images={imageMapPromise}
-            onClose={() => setShowTicketModal(false)}
+            imageMapPromise={imageMapPromise}
+            // onClose={() => setShowTicketModal(false)}
         />
     ) : (
         <Modal onClose={onClose}>

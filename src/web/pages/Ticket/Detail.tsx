@@ -11,6 +11,7 @@ import {trpcClient} from "@woco/web/trpc.ts";
 interface Props {
     ticket: Ticket;
     postmark: z.infer<typeof PostmarkSchema>;
+    imageMapPromise: Promise<ImageMap>
 }
 
 const Block = styled.div`
@@ -90,7 +91,7 @@ const StyledImage = styled.img<{ $removed?: boolean; $added?: boolean }>`
             $added ? "green" : $removed ? "red" : "transparent"};
 `;
 
-const Detail: React.FC<Props> = ({ticket, postmark}) => {
+const Detail: React.FC<Props> = ({ticket, postmark, imageMapPromise}) => {
     const changes = ticket.changes ?? {};
 
     // FIXME
@@ -100,11 +101,6 @@ const Detail: React.FC<Props> = ({ticket, postmark}) => {
 
 
     // Blar blar something something modal loading lazy cant update iDK FIXME
-    const imageMapPromise = useMemo(() => {
-        return trpcClient.tickets.images.query({ ticket });
-    }, [ticket.id]);
-
-
     const [resolvedImages, setResolvedImages] = useState<ImageMap>({});
     useEffect(() => {
         imageMapPromise.then(setResolvedImages);
