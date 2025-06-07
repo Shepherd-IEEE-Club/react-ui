@@ -3,7 +3,6 @@ import styled from "styled-components";
 
 import { Button } from "@woco/web/pages/style.ts";
 import Detail from "./Detail.tsx";
-import MakeTicket from "./MakeTicket.tsx";
 import ImageCarousel from '@woco/web/components/ImageCarousel.tsx';
 import Modal from "@woco/web/components/Modal.tsx"; // ✅
 
@@ -50,7 +49,6 @@ const PostmarkModal: React.FC<ModalProps> = ({ postmark, imageMapPromise, onClos
         <Creation
             postmark={postmark}
             imageMapPromise={imageMapPromise}
-            // onClose={() => setShowTicketModal(false)}
         />
     ) : (
         <Modal onClose={onClose}>

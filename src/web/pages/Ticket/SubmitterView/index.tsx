@@ -8,12 +8,16 @@ import Detail from "@woco/web/pages/Ticket/Detail.tsx";
 
 import {TICKET_STATUS_LABELS} from "@woco/web/constants.ts";
 import {modalManager} from "@woco/web/pages/ModalManager.tsx";
+import {TableContext} from "@woco/web/context/TableContext.ts";
 
 const SubmitterView: React.FC = () => {
     const {data, isLoading, error} = trpc.tickets.mine.useQuery({
         user_id: 1,
         limit: 10000,
     });
+    const refetch = () => {
+        console.log('hi')
+    }
 
     // FIXME should blow up
     // I forgot what i meant by that
@@ -38,6 +42,7 @@ const SubmitterView: React.FC = () => {
 
 
     return (
+
         <div style={{width: "100%", height: "100%", overflowY: "auto"}}>
 
             <FilterButtons

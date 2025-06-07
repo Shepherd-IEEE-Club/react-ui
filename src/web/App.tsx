@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import styled, {createGlobalStyle} from "styled-components";
 
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
-import { httpBatchLink, loggerLink } from "@trpc/client";
+import {httpBatchLink, loggerLink} from "@trpc/client";
 
 
 import SearchableList from "@woco/web/pages/Search/index.tsx";
@@ -14,6 +14,8 @@ import {trpc} from "@woco/web/trpc.ts";
 import superjson from "superjson";
 import TicketsPage from "@woco/web/pages/Ticket";
 import {ModalManagerWrapper} from "@woco/web/pages/ModalManager.tsx";
+import {TableContext} from './context/TableContext';
+import {TableProvider} from "@woco/web/context/TableProvider.tsx";
 /* ───────────────────────  styling  ─────────────────────── */
 
 const GlobalStyle = createGlobalStyle`
@@ -43,7 +45,7 @@ const Container = styled.div`
     align-items: center;
     width: 100vw;
     overflow-y: auto;
-    
+
     > * {
         width: 100%;
         max-width: 80vw;
@@ -59,7 +61,7 @@ export default function App() {
     const [trpcClient] = useState(() =>
         trpc.createClient({
             links: [
-                loggerLink({ enabled: () => true }), // 👈 this must log
+                loggerLink({enabled: () => true}), // 👈 this must log
                 httpBatchLink({
                     url: 'http://localhost:3001/trpc',
                     transformer: superjson,
@@ -74,19 +76,21 @@ export default function App() {
 
                 <Router>
                     <GlobalStyle/>
-                    <Page>
-                        <Header/>
-                        <Container>
-                            <Routes>
-                                <Route path="/" element={<LandingPage/>}/>
-                                <Route path="/search" element={<SearchableList/>}/>
-                                <Route path="/ticket" element={<TicketsPage/>}/>
-                                <Route path="/info" element={<InfoPage/>}/>
-                            </Routes>
-                        </Container>
+                    <TableProvider>
+                        <Page>
+                            <Header/>
+                            <Container>
+                                <Routes>
+                                    <Route path="/" element={<LandingPage/>}/>
+                                    <Route path="/search" element={<SearchableList/>}/>
+                                    <Route path="/ticket" element={<TicketsPage/>}/>
+                                    <Route path="/info" element={<InfoPage/>}/>
+                                </Routes>
+                            </Container>
 
-                        <ModalManagerWrapper />
-                    </Page>
+                            <ModalManagerWrapper/>
+                        </Page>
+                    </TableProvider>
                 </Router>
             </QueryClientProvider>
         </trpc.Provider>

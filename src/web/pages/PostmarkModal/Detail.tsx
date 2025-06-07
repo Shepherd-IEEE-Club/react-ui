@@ -114,18 +114,36 @@ const Detail: React.FC<Props> = ({postmark, imageMapPromise}) => {
                 <div>Field</div>
                 <div>Current</div>
             </Header>
-            {postmarkEntries.map(([key, currentVal]) => (
-                <Row key={key}>
-                    <div style={{ fontWeight: 600 }}>{key}</div>
-                    <div>
-                        {currentVal == null
-                            ? <em>None</em>
-                            : typeof currentVal === "object"
-                                ? "[object]"
-                                : currentVal}
-                    </div>
-                </Row>
-            ))}
+            <Row>
+                <div style={{ fontWeight: 600 }}>Postmark</div>
+                <div>{postmark.postmark ?? <em>None</em>}</div>
+            </Row>
+
+            <Row>
+                <div style={{ fontWeight: 600 }}>Town</div>
+                <div>{postmark.town ?? <em>None</em>}</div>
+            </Row>
+
+            <Row>
+                <div style={{ fontWeight: 600 }}>State</div>
+                <div>{postmark.state ?? <em>None</em>}</div>
+            </Row>
+
+            <Row>
+                <div style={{ fontWeight: 600 }}>Date Seen</div>
+                <div>{postmark.date_seen ?? <em>None</em>}</div>
+            </Row>
+
+            <Row>
+                <div style={{ fontWeight: 600 }}>Size</div>
+                <div>{postmark.size ?? <em>None</em>}</div>
+            </Row>
+
+            <Row>
+                <div style={{ fontWeight: 600 }}>Colors</div>
+                <div>{postmark.colors ?? <em>None</em>}</div>
+            </Row>
+
 
 
             <Row>

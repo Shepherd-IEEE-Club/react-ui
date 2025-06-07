@@ -7,10 +7,20 @@ import type { Ticket } from "@woco/schema/ticket";
 // Styled components
 const Wrapper = styled.div`
     padding: 1.5rem;
+    width: 100%;
     max-width: 600px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 `;
 
 const Title = styled.h3`

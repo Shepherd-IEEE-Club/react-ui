@@ -9,6 +9,8 @@ import {Button} from "@woco/web/pages/style.ts";
 import {trpc} from "@woco/web/trpc.ts";
 import OkPopup from "@woco/web/components/OkPopup.tsx";
 import {modalManager} from "@woco/web/pages/ModalManager.tsx";
+import {ImageGallery} from "@woco/web/components/ImageGallery.tsx";
+import { useTableContext } from "@woco/web/context/TableContext";
 
 
 interface Props {
@@ -29,13 +31,7 @@ const ImageComparison = styled.div`
     width: 100%;
 `;
 
-const ImageList = styled.div`
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    width: 100%;
-    box-sizing: border-box;
-`;
+
 
 
 const Label = styled.div`
@@ -105,10 +101,8 @@ const Wrapper = styled.div`
 
 
 const Creation: React.FC<Props> = ({ticket, postmark, imageMapPromise}) => {
-    console.log(ticket?.changes)
     // const changes = ticket.changes ?? {};
     const [changes, setChanges] = useState<Record<string, any>>(ticket?.changes ?? {});
-
 
     // FIXME
     const postmarkEntries = Object.entries(postmark).filter(
@@ -137,12 +131,11 @@ const Creation: React.FC<Props> = ({ticket, postmark, imageMapPromise}) => {
                     {/*<p>Comment: {ticket.comment}</p>*/}
                     {/*<p>Created: {new Date(ticket.created_at).toLocaleString()}</p>*/}
 
-                    {/*/!*TODO*!/*/}
-                    {/*{ticket.deny_comment && (*/}
-                    {/*    <p style={{color: 'darkred', fontWeight: 'bold'}}>*/}
-                    {/*        Denial Reason: {ticket.deny_comment}*/}
-                    {/*    </p>*/}
-                    {/*)}*/}
+                    {ticket?.deny_comment && (
+                        <p style={{color: 'darkred', fontWeight: 'bold'}}>
+                            Denial Reason: {ticket.deny_comment}
+                        </p>
+                    )}
 
                     <hr/>
                     <h4>Postmark Comparison</h4>
@@ -240,41 +233,34 @@ const Creation: React.FC<Props> = ({ticket, postmark, imageMapPromise}) => {
                     </ComparisonRow>
 
 
-                    <ComparisonRow>
-                        <div style={{fontWeight: 600}}>images</div>
+                    {/*<ComparisonRow>*/}
+                    {/*    <div style={{fontWeight: 600}}>images</div>*/}
 
-                        {/*FIXME ensure proper order*/}
-                        <ImageList>
-                            {Object.values(imageMapPromise)
-                                .filter((img) => img.postmark_id != null)
-                                .map((img) => (
-                                    <StyledImage
-                                        key={img.id}
-                                        src={`data:image/jpeg;base64,${img.data}`}
-                                    />
-                                ))}
-                        </ImageList>
-                        {/*FIXME implement uploading removing images*/}
-                        {/*<ImageList>*/}
-                        {/*    {Object.values(images).map((img) => {*/}
-                        {/*        // if image is in the removal list, its being removed*/}
-                        {/*        const isRemoved = ticket.changes.remove_images?.includes(img.id)*/}
-                        {/*        console.log(images)*/}
-                        {/*        // if image has a ticket id, it has yet to be added*/}
-                        {/*        const isAdded = img.ticket_id != null;*/}
+                    {/*    /!*FIXME ensure proper order*!/*/}
+                    {/*    /!*<ImageList>*!/*/}
+                    {/*    /!*    <ImageGallery imagesPromise={imageMapPromise}></ImageGallery>*!/*/}
+                    {/*    /!*</ImageList>*!/*/}
+                    {/*    /!*FIXME implement uploading removing images*!/*/}
+                    {/*    /!*<ImageList>*!/*/}
+                    {/*    /!*    {Object.values(images).map((img) => {*!/*/}
+                    {/*    /!*        // if image is in the removal list, its being removed*!/*/}
+                    {/*    /!*        const isRemoved = ticket.changes.remove_images?.includes(img.id)*!/*/}
+                    {/*    /!*        console.log(images)*!/*/}
+                    {/*    /!*        // if image has a ticket id, it has yet to be added*!/*/}
+                    {/*    /!*        const isAdded = img.ticket_id != null;*!/*/}
 
-                        {/*        return (*/}
-                        {/*            <StyledImage*/}
-                        {/*                key={img.id}*/}
-                        {/*                src={`data:image/jpeg;base64,${img.data}`}*/}
-                        {/*                alt={`Proposed Image ${img.id}`}*/}
-                        {/*                $added={isAdded}*/}
-                        {/*                $removed={isRemoved}*/}
-                        {/*            />*/}
-                        {/*        );*/}
-                        {/*    })}*/}
-                        {/*</ImageList>*/}
-                    </ComparisonRow>
+                    {/*    /!*        return (*!/*/}
+                    {/*    /!*            <StyledImage*!/*/}
+                    {/*    /!*                key={img.id}*!/*/}
+                    {/*    /!*                src={`data:image/jpeg;base64,${img.data}`}*!/*/}
+                    {/*    /!*                alt={`Proposed Image ${img.id}`}*!/*/}
+                    {/*    /!*                $added={isAdded}*!/*/}
+                    {/*    /!*                $removed={isRemoved}*!/*/}
+                    {/*    /!*            />*!/*/}
+                    {/*    /!*        );*!/*/}
+                    {/*    /!*    })}*!/*/}
+                    {/*    /!*</ImageList>*!/*/}
+                    {/*</ComparisonRow>*/}
 
                     <hr/>
                     <div style={{marginTop: "1.5rem"}}>
@@ -292,7 +278,7 @@ const Creation: React.FC<Props> = ({ticket, postmark, imageMapPromise}) => {
                                         onSuccess: () => {
                                             modalManager.push(
                                                 <OkPopup
-                                                    message="Your changes have been saved!"
+                                                    message="Ticket submitted."
                                                     onOk={() => {
                                                         modalManager.pop();
                                                         modalManager.pop();
@@ -305,7 +291,7 @@ const Creation: React.FC<Props> = ({ticket, postmark, imageMapPromise}) => {
                                         onError: (error) => {
                                             modalManager.push(
                                                 <OkPopup
-                                                    message={`Failed to save changes: ${error.message}`}
+                                                    message={`Error creating ticket: ${error.message}`}
                                                 />
                                             );
                                         },
