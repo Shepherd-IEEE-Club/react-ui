@@ -1,10 +1,11 @@
 // .storybook/preview.tsx
 import React from 'react';
-import { initialize, mswLoader } from 'msw-storybook-addon';
-import type { Preview } from '@storybook/react';
-import { withThemeByDataAttribute } from '@storybook/addon-themes';
-import { TRPCReactProvider } from '@woco/web/msw.tsx';
-import { ModalManager } from "@woco/web/pages/ModalManager.tsx";
+import {initialize, mswLoader} from 'msw-storybook-addon';
+import type {Preview} from '@storybook/react';
+import {withThemeByDataAttribute} from '@storybook/addon-themes';
+import {TRPCReactProvider} from '@woco/web/msw.tsx';
+import {ModalManagerWrapper} from "@woco/web/pages/ModalManager.tsx";
+
 initialize();
 
 const preview: Preview = {
@@ -12,18 +13,18 @@ const preview: Preview = {
     decorators: [
         withThemeByDataAttribute({
             defaultTheme: 'light',
-            themes: { light: 'light', dark: 'dark' },
+            themes: {light: 'light', dark: 'dark'},
             attributeName: 'data-mode',
         }),
         (Story) => (
             <TRPCReactProvider>
-                <ModalManager>
-                    <Story />
-                </ModalManager>
+                <ModalManagerWrapper>
+                    <Story/>
+                </ModalManagerWrapper>
             </TRPCReactProvider>
         ),
     ],
-    parameters: { /* your controls/etc here */ },
+    parameters: { /* your controls/etc here */},
 };
 
 export default preview;

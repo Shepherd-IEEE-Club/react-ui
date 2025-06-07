@@ -7,9 +7,9 @@ import type {z} from "zod";
 import {PostmarkSchema} from "@woco/schema/postmark.ts";
 import Detail from "@woco/web/pages/Ticket/Detail.tsx";
 import DenialReasonModal from "@woco/web/pages/Ticket/ApproverView/denialmodal.tsx";
-import {useModal} from "@woco/web/pages/ModalManager.tsx";
 import {useApproveTicket} from "@woco/web/hooks/useApproveTicket.ts";
 import {useDenyTicket} from "@woco/web/hooks/useDenyTicket.ts";
+import {modalManager} from "@woco/web/pages/ModalManager.tsx";
 
 interface Props {
     ticket: Ticket;
@@ -46,7 +46,6 @@ const DenyButton = styled(Button)`
 `;
 
 const TicketModal: React.FC<Props> = ({postmark, ticket}) => {
-    const modal = useModal()
     const approve = useApproveTicket();
     const deny = useDenyTicket();
 
@@ -62,17 +61,17 @@ const TicketModal: React.FC<Props> = ({postmark, ticket}) => {
                 <Footer>
                     <DenyButton
                         onClick={() =>
-                            modal.push(
+                            modalManager.push(
                                 <DenialReasonModal
                                     ticket={ticket}
-                                    onClose={modal.pop}
+                                    onClose={modalManager.pop}
                                     onSubmit={(payload) => {
                                         deny.mutate(payload);
 
                                         // Close this modal and caller
                                         // TODO programmatic way to keep track of modal depth?
-                                        modal.pop();
-                                        modal.pop();
+                                        modalManager.pop();
+                                        modalManager.pop();
                                     }}
                                 />
                             )
@@ -84,7 +83,7 @@ const TicketModal: React.FC<Props> = ({postmark, ticket}) => {
                     <ApproveButton
                         onClick={() => {
                             approve.mutate({ticket_id: ticket.id});
-                            modal.pop();
+                            modalManager.pop();
                         }}
                     >
                         Approve

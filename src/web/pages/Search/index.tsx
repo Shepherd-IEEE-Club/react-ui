@@ -5,7 +5,7 @@ import PostmarkModal from "@woco/web/pages/PostmarkModal";
 import PostmarksTable from "./table.tsx";
 import {Postmark} from "@woco/schema/postmark.ts";
 import { trpcClient} from "@woco/web/trpc.ts";
-import {useModal} from "@woco/web/pages/ModalManager.tsx";
+import {modalManager} from "@woco/web/pages/ModalManager.tsx";
 
 //TODO detail modal show thumbnail while its getting real picture from server
 // TODO maybe get every postmark, then lazy load thumbnails?
@@ -71,7 +71,6 @@ const Button = styled.button`
 
 /* ---------- component ---------- */
 const Search: React.FC = () => {
-    const modal = useModal()
 
     /* UI state */
     // const [selectedPostmark, setSelectedPostmark] = useState<Postmark | null>(null);
@@ -204,7 +203,7 @@ const Search: React.FC = () => {
             <PostmarksTable
                 postmarks={postmarks}
                 onRowClick={(postmark) =>
-                    modal.push(
+                    modalManager.push(
                         <PostmarkModal
                             postmark={postmark}
 

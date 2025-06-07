@@ -7,6 +7,8 @@ import type {PostmarkSchema, PostmarkImageSchema, ImageMap} from "@woco/schema/p
 import {TICKET_STATUS_LABELS} from "@woco/web/constants.ts";
 import {Button} from "@woco/web/pages/style.ts";
 import {trpc} from "@woco/web/trpc.ts";
+import OkPopup from "@woco/web/components/OkPopup.tsx";
+import {modalManager} from "@woco/web/pages/ModalManager.tsx";
 
 
 interface Props {
@@ -103,6 +105,7 @@ const Wrapper = styled.div`
 
 
 const Detail: React.FC<Props> = ({ticket, postmark, images, onClose}) => {
+
     // const changes = ticket.changes ?? {};
     const [changes, setChanges] = useState<Record<string, any>>(ticket?.changes ?? {});
 
@@ -121,7 +124,6 @@ const Detail: React.FC<Props> = ({ticket, postmark, images, onClose}) => {
         // status_id: 1,
         changes: {},
     };
-
 
 
     return (
@@ -279,14 +281,36 @@ const Detail: React.FC<Props> = ({ticket, postmark, images, onClose}) => {
                         <Button
                             onClick={() => {
                                 console.log("Submitting changes:", changes);
-                                createTicket.mutate({
-                                    user_id: newTicket.user_id,
-                                    postmark_id: newTicket.postmark_id,
-                                    // comment: ticket.comment,
-                                    changes,
-                                    // status_id: 1, // or whatever you want
-                                });
 
+                                createTicket.mutate(
+                                    {
+                                        user_id: newTicket.user_id,
+                                        postmark_id: newTicket.postmark_id,
+                                        changes,
+                                    },
+                                    {
+                                        onSuccess: () => {
+                                            modalManager.push(
+                                                <OkPopup
+                                                    message="Your changes have been saved!"
+                                                    onOk={() => {
+                                                        modalManager.pop();
+                                                        modalManager.pop();
+                                                        modalManager.pop();
+                                                    }}
+                                                />
+                                            );
+                                        },
+                                        // TODO cleanup erro, maybe reusable error popup?
+                                        onError: (error) => {
+                                            modalManager.push(
+                                                <OkPopup
+                                                    message={`Failed to save changes: ${error.message}`}
+                                                />
+                                            );
+                                        },
+                                    }
+                                );
                             }}
                         >
                             Submit Changes

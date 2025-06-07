@@ -13,7 +13,7 @@ import InfoPage from "@woco/web/pages/info.tsx";
 import {trpc} from "@woco/web/trpc.ts";
 import superjson from "superjson";
 import TicketsPage from "@woco/web/pages/Ticket";
-import {ModalManager} from "@woco/web/pages/ModalManager.tsx";
+import {ModalManagerWrapper} from "@woco/web/pages/ModalManager.tsx";
 /* ───────────────────────  styling  ─────────────────────── */
 
 const GlobalStyle = createGlobalStyle`
@@ -85,7 +85,7 @@ export default function App() {
                             </Routes>
                         </Container>
 
-                        <ModalManager />
+                        <ModalManagerWrapper />
                     </Page>
                 </Router>
             </QueryClientProvider>

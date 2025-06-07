@@ -2,26 +2,41 @@ import React, {useState, createContext, useContext, useEffect} from 'react';
 import styled from "styled-components";
 
 
+// for external use
+export let modalManager: {
+    push: (view: React.ReactNode) => void;
+    pop: () => void;
+    clear: () => void;
+} = {
+    push: () => {
+        throw new Error("modalManager not initialized");
+    },
+    pop: () => {},
+    clear: () => {},
+};
+
+
+
+// TODO old way
 const ModalManagerContext = createContext<{
     push: (view: React.ReactNode) => void;
     pop: () => void;
     clear: () => void;
 }>({
     push: () => {
-        console.log('hi')
     }, pop: () => {
     }, clear: () => {
     }
 });
-
-export const useModal = () => {
-    const ctx = useContext(ModalManagerContext);
-    console.log("fortnite")
-    if (!ctx || ctx.push === undefined) {
-        throw new Error("useModal must be used within a <ModalManager />");
-    }
-    return ctx;
-};
+//
+// export const useModal = () => {
+//     const ctx = useContext(ModalManagerContext);
+//     console.log("fortnite")
+//     if (!ctx || ctx.push === undefined) {
+//         throw new Error("useModal must be used within a <ModalManager />");
+//     }
+//     return ctx;
+// };
 
 
 const Overlay = styled.div`
@@ -38,7 +53,9 @@ const Overlay = styled.div`
 `;
 
 
-export const ModalManager: React.FC<{ children?: React.ReactNode }> = ({children}) => {
+export const ModalManagerWrapper: React.FC<{ children?: React.ReactNode }> = ({children}) => {
+
+
     const [stack, setStack] = useState<React.ReactNode[]>([]);
 
     const push = (view: React.ReactNode) => {
@@ -50,6 +67,15 @@ export const ModalManager: React.FC<{ children?: React.ReactNode }> = ({children
     const clear = () => setStack([]);
 
     const top = stack[stack.length - 1];
+
+
+    // set modal manager accessor bob thingy context
+    useEffect(() => {
+        modalManager.push = push;
+        modalManager.pop = pop;
+        modalManager.clear = clear;
+    }, []);
+
 
 
     // Pop top upon escape key

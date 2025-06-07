@@ -7,12 +7,9 @@ import {PostmarkSchema} from "@woco/schema/postmark.ts";
 import Detail from "@woco/web/pages/Ticket/Detail.tsx";
 
 import {TICKET_STATUS_LABELS} from "@woco/web/constants.ts";
-import {useModal} from "@woco/web/pages/ModalManager.tsx";
+import {modalManager} from "@woco/web/pages/ModalManager.tsx";
 
 const SubmitterView: React.FC = () => {
-    const modal = useModal();
-
-
     const {data, isLoading, error} = trpc.tickets.mine.useQuery({
         user_id: 1,
         limit: 10000,
@@ -55,7 +52,7 @@ const SubmitterView: React.FC = () => {
                 postmarks={postmarks}
                 onRowClick={(ticket) => {
                     const postmark = PostmarkSchema.parse(postmarks[ticket.postmark_id]);
-                    modal.push(
+                    modalManager.push(
                         <TicketModal
                             ticket={ticket}
                             postmark={postmark}

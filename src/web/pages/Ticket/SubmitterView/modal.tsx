@@ -5,6 +5,7 @@ import Detail from "@woco/web/pages/Ticket/Detail.tsx";
 import {PostmarkSchema} from "@woco/schema/postmark.ts";
 import type {Ticket} from "@woco/schema/ticket.ts";
 import type {z} from "zod";
+import {modalManager} from "@woco/web/pages/ModalManager.tsx";
 
 interface Props {
     ticket: Ticket;
@@ -28,6 +29,18 @@ const TicketModal: React.FC<Props> = ({ticket, postmark}) => {
                     ticket={ticket}
                     postmark={postmark}
                 />
+
+                {ticket.status_id === 3 && (
+                    <button
+                        onClick={() => {
+                            modalManager.push(
+                                <div>hi</div>
+                            )
+                        }}
+                    >
+                        Recompose Ticket
+                    </button>
+                )}
             </Wrapper>
         </Modal>
     );

@@ -9,10 +9,9 @@ import Detail from "@woco/web/pages/Ticket/Detail.tsx";
 
 import {useApproveTicket} from "@woco/web/hooks/useApproveTicket.ts";
 import {useDenyTicket} from "@woco/web/hooks/useDenyTicket.ts";
-import {useModal} from "@woco/web/pages/ModalManager.tsx";
+import {modalManager} from "@woco/web/pages/ModalManager.tsx";
 
 const ApproverView: React.FC = () => {
-    const modal = useModal()
     const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
     const [showDenialModal, setShowDenialModal] = useState(false);
 
@@ -59,7 +58,7 @@ const ApproverView: React.FC = () => {
                 postmarks={postmarks}
                 onRowClick={(ticket) => {
                     const postmark = PostmarkSchema.parse(postmarks[ticket.postmark_id]);
-                    modal.push(
+                    modalManager.push(
                         <TicketModal
                             ticket={ticket}
                             postmark={postmark}
