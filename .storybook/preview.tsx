@@ -4,7 +4,7 @@ import { initialize, mswLoader } from 'msw-storybook-addon';
 import type { Preview } from '@storybook/react';
 import { withThemeByDataAttribute } from '@storybook/addon-themes';
 import { TRPCReactProvider } from '@woco/web/msw.tsx';
-
+import { ModalManager } from "@woco/web/pages/ModalManager.tsx";
 initialize();
 
 const preview: Preview = {
@@ -17,7 +17,9 @@ const preview: Preview = {
         }),
         (Story) => (
             <TRPCReactProvider>
-                <Story />
+                <ModalManager>
+                    <Story />
+                </ModalManager>
             </TRPCReactProvider>
         ),
     ],

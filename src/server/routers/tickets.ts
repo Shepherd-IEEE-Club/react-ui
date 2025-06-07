@@ -211,7 +211,7 @@ export const ticketsRouter = router({
                 id: true,
                 deny_comment: true,
             })
-        )
+        )// @woco/web/components/Modal.tsx
         .mutation(async ({ input, ctx }) => {
             // TODO auth
             // if (!ctx.session?.user) throw new Error("Unauthorized");

@@ -99,7 +99,7 @@ const StyledImage = styled.img<{ $removed?: boolean; $added?: boolean }>`
     $added ? "green" : $removed ? "red" : "transparent"};
 `;
 
-const Detail: React.FC<Props> = ({postmark, images}) => {
+const Detail: React.FC<Props> = ({postmark, imageMapPromise}) => {
     // const changes = ticket.changes ?? {};
 
     // FIXME
@@ -134,7 +134,7 @@ const Detail: React.FC<Props> = ({postmark, images}) => {
                 {/*FIXME ensure proper order*/}
                 {/*<ImageList imagesPromise={images}></ImageList>*/}
                 <ImageList>
-                    <ImageGallery imagesPromise={images}></ImageGallery>
+                    <ImageGallery imagesPromise={imageMapPromise}></ImageGallery>
                 </ImageList>
 
             </Row>

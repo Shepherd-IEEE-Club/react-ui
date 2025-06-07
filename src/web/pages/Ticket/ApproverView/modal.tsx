@@ -6,13 +6,16 @@ import type {Ticket} from "@woco/schema/ticket.ts";
 import type {z} from "zod";
 import {PostmarkSchema} from "@woco/schema/postmark.ts";
 import Detail from "@woco/web/pages/Ticket/Detail.tsx";
+import DenialReasonModal from "@woco/web/pages/Ticket/ApproverView/denialmodal.tsx";
+import {useModal} from "@woco/web/pages/ModalManager.tsx";
+import {useApproveTicket} from "@woco/web/hooks/useApproveTicket.ts";
+import {useDenyTicket} from "@woco/web/hooks/useDenyTicket.ts";
 
 interface Props {
     ticket: Ticket;
     postmark: z.infer<typeof PostmarkSchema>;
-    onClose: () => void;
-    onApprove?: () => void;
-    onDeny?: () => void;
+    // onApprove?: () => void;
+    // onDeny?: () => void;
 }
 
 const Wrapper = styled.div`
@@ -42,22 +45,51 @@ const DenyButton = styled(Button)`
     color: white;
 `;
 
-const TicketModal: React.FC<Props> = ({postmark, ticket, onClose, onApprove, onDeny}) => {
+const TicketModal: React.FC<Props> = ({postmark, ticket}) => {
+    const modal = useModal()
+    const approve = useApproveTicket();
+    const deny = useDenyTicket();
+
     return (
-        <Modal onClose={onClose}>
+        <Modal>
             <Wrapper>
                 <Detail
                     ticket={ticket}
                     postmark={postmark}
-                    // imageMapPromise={imageMapPromise}
                 />
 
-                {(onApprove || onDeny) && (
-                    <Footer>
-                        {onDeny && <DenyButton onClick={onDeny}>Deny</DenyButton>}
-                        {onApprove && <ApproveButton onClick={onApprove}>Approve</ApproveButton>}
-                    </Footer>
-                )}
+
+                <Footer>
+                    <DenyButton
+                        onClick={() =>
+                            modal.push(
+                                <DenialReasonModal
+                                    ticket={ticket}
+                                    onClose={modal.pop}
+                                    onSubmit={(payload) => {
+                                        deny.mutate(payload);
+
+                                        // Close this modal and caller
+                                        // TODO programmatic way to keep track of modal depth?
+                                        modal.pop();
+                                        modal.pop();
+                                    }}
+                                />
+                            )
+                        }
+                    >
+                        Deny
+                    </DenyButton>
+
+                    <ApproveButton
+                        onClick={() => {
+                            approve.mutate({ticket_id: ticket.id});
+                            modal.pop();
+                        }}
+                    >
+                        Approve
+                    </ApproveButton>
+                </Footer>
             </Wrapper>
         </Modal>
     );

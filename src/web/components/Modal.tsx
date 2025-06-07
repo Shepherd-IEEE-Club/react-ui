@@ -1,24 +1,12 @@
-// @woco/web/components/Modal.tsx
-import React from "react";
+import React, {useEffect} from "react";
 import styled from "styled-components";
 
 interface ModalProps {
-    onClose: () => void;
+    onClose?: () => void;
     children: React.ReactNode;
 }
 
-const Overlay = styled.div`
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-`;
+
 
 const ModalContainer = styled.div`
     background: white;
@@ -32,12 +20,11 @@ const ModalContainer = styled.div`
 `;
 
 const Modal: React.FC<ModalProps> = ({ onClose, children }) => {
+
     return (
-        <Overlay onClick={onClose}>
             <ModalContainer onClick={(e) => e.stopPropagation()}>
                 {children}
             </ModalContainer>
-        </Overlay>
     );
 };
 

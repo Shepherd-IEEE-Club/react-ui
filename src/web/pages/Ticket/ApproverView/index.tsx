@@ -9,8 +9,10 @@ import Detail from "@woco/web/pages/Ticket/Detail.tsx";
 
 import {useApproveTicket} from "@woco/web/hooks/useApproveTicket.ts";
 import {useDenyTicket} from "@woco/web/hooks/useDenyTicket.ts";
+import {useModal} from "@woco/web/pages/ModalManager.tsx";
 
 const ApproverView: React.FC = () => {
+    const modal = useModal()
     const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
     const [showDenialModal, setShowDenialModal] = useState(false);
 
@@ -55,37 +57,18 @@ const ApproverView: React.FC = () => {
             <TicketTable
                 tickets={filteredTickets}
                 postmarks={postmarks}
-                onRowClick={setSelectedTicket}
+                onRowClick={(ticket) => {
+                    const postmark = PostmarkSchema.parse(postmarks[ticket.postmark_id]);
+                    modal.push(
+                        <TicketModal
+                            ticket={ticket}
+                            postmark={postmark}
+                        />
+                    );
+                }}
                 loading={isLoading}
             />
 
-            {selectedTicket && (
-                <TicketModal
-                    ticket={selectedTicket}
-                    postmark={PostmarkSchema.parse(postmarks[selectedTicket.postmark_id])}
-                    onClose={() => setSelectedTicket(null)}
-                    onApprove={() => {
-                        approve.mutate({ticket_id: selectedTicket.id});
-                        setSelectedTicket(null);
-                    }}
-                    onDeny={() => {
-                        setShowDenialModal(true);
-                    }}
-                />
-            )}
-
-            {showDenialModal && selectedTicket && (
-                <DenialReasonModal
-                    ticket={selectedTicket}
-                    onClose={() => setShowDenialModal(false)}
-                    onSubmit={
-                        (updatedTicket) => {
-                            deny.mutate(updatedTicket);
-                        }
-                    }
-
-                />
-            )}
         </div>
     );
 };

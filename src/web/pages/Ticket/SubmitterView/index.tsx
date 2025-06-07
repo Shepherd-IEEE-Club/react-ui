@@ -7,9 +7,10 @@ import {PostmarkSchema} from "@woco/schema/postmark.ts";
 import Detail from "@woco/web/pages/Ticket/Detail.tsx";
 
 import {TICKET_STATUS_LABELS} from "@woco/web/constants.ts";
+import {useModal} from "@woco/web/pages/ModalManager.tsx";
 
 const SubmitterView: React.FC = () => {
-    const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
+    const modal = useModal();
 
 
     const {data, isLoading, error} = trpc.tickets.mine.useQuery({
@@ -18,9 +19,9 @@ const SubmitterView: React.FC = () => {
     });
 
     // FIXME should blow up
+    // I forgot what i meant by that
     const tickets = data?.tickets ?? [];
     const postmarks = data?.postmarks ?? {};
-
 
 
     type status_options = number | "all";
@@ -49,21 +50,21 @@ const SubmitterView: React.FC = () => {
             />
 
 
-
             <TicketTable
                 tickets={filteredTickets}
                 postmarks={postmarks}
-                onRowClick={setSelectedTicket}
+                onRowClick={(ticket) => {
+                    const postmark = PostmarkSchema.parse(postmarks[ticket.postmark_id]);
+                    modal.push(
+                        <TicketModal
+                            ticket={ticket}
+                            postmark={postmark}
+                        />
+                    );
+                }}
+
                 loading={isLoading}
             />
-
-            {selectedTicket && (
-                <TicketModal
-                    ticket={selectedTicket}
-                    postmark={PostmarkSchema.parse(postmarks[selectedTicket.postmark_id])}
-                    onClose={() => setSelectedTicket(null)}
-                />
-            )}
 
         </div>
     );

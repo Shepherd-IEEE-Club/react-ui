@@ -8,7 +8,7 @@ import type {Postmark} from "@woco/schema/postmark.ts";
 interface PostmarksTableProps {
     postmarks: Postmark[],
     onRowClick: (postmark: Postmark) => void,
-    query: { startYear?: number; endYear?: number },
+    // query: { startYear?: number; endYear?: number },
     loading: boolean
 }
 
@@ -20,7 +20,7 @@ const Image = styled.img`
 
 //FIXME back to top button
 
-const PostmarksTable: React.FC<PostmarksTableProps> = ({postmarks, onRowClick, query, loading}) => {
+const PostmarksTable: React.FC<PostmarksTableProps> = ({postmarks, onRowClick, loading}) => {
     // const filteredPostmarks = postmarks.filter(pm => {
     //     // if (!pm.date_seen) return true;
     //     // const year = new Date(pm.date_seen).getFullYear();

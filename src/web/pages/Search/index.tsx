@@ -5,13 +5,8 @@ import PostmarkModal from "@woco/web/pages/PostmarkModal";
 import PostmarksTable from "./table.tsx";
 import {Postmark} from "@woco/schema/postmark.ts";
 import { trpcClient} from "@woco/web/trpc.ts";
-//
-// import type { Postmark } from "@woco/schema/postmark.ts";
-// import type {Ticket} from "@woco/schema/ticket.ts";
+import {useModal} from "@woco/web/pages/ModalManager.tsx";
 
-
-
-//FIXME why fuck these errors bru
 //TODO detail modal show thumbnail while its getting real picture from server
 // TODO maybe get every postmark, then lazy load thumbnails?
 
@@ -76,6 +71,7 @@ const Button = styled.button`
 
 /* ---------- component ---------- */
 const Search: React.FC = () => {
+    const modal = useModal()
 
     /* UI state */
     // const [selectedPostmark, setSelectedPostmark] = useState<Postmark | null>(null);
@@ -101,7 +97,7 @@ const Search: React.FC = () => {
 
         {
             getNextPageParam: (last) => last.nextCursor ?? undefined,
-            keepPreviousData: true,
+            // keepPreviousData: true,
         }
     );
 
@@ -205,20 +201,26 @@ const Search: React.FC = () => {
             />
 
             {/* table */}
-            <PostmarksTable postmarks={postmarks} onRowClick={setSelectedPostmark} loading={isLoading} />
+            <PostmarksTable
+                postmarks={postmarks}
+                onRowClick={(postmark) =>
+                    modal.push(
+                        <PostmarkModal
+                            postmark={postmark}
 
-            {/* modal */}
-            {selectedPostmark && (
-                <PostmarkModal
-                    postmark={selectedPostmark}
-                    imageMapPromise={trpcClient.postmarks.images.query({ id: selectedPostmark.id })}
-                    onClose={() => setSelectedPostmark(null)}
-                />
-            )}
+                            imageMapPromise={trpcClient.postmarks.images.query({ id: postmark.id })}
+                            onClose={() => setSelectedPostmark(null)}
+                        />
+                    )
+                }
+                loading={isLoading}
+            />
+
+
+
 
             {/* load‑more marker for screen‑readers / debug */}
             {isFetchingNextPage && <p style={{ margin: "1rem" }}>Loading more…</p>}
-            {error && <p style={{ color: "red" }}>{(error as Error).message}</p>}
         </Container>
     );
 };
