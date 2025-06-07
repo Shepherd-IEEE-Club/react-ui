@@ -21,10 +21,7 @@ const SubmitterView: React.FC = () => {
     const tickets = data?.tickets ?? [];
     const postmarks = data?.postmarks ?? {};
 
-    const {data: images} = trpc.tickets.images.useQuery(
-        {ticket: selectedTicket!},
-        {enabled: !!selectedTicket} // Fetch if selected
-    );
+
 
     type status_options = number | "all";
     const [statusFilter, setStatusFilter] = useState<status_options>('all');
@@ -62,19 +59,12 @@ const SubmitterView: React.FC = () => {
 
             {selectedTicket && (
                 <TicketModal
-                    detail={
-                        <Detail
-                            ticket={selectedTicket}
-                            postmark={PostmarkSchema.parse(postmarks[selectedTicket.postmark_id])}
-                            images={images ?? {}}
-                        />
-                    }
+                    ticket={selectedTicket}
+                    postmark={PostmarkSchema.parse(postmarks[selectedTicket.postmark_id])}
                     onClose={() => setSelectedTicket(null)}
                 />
             )}
 
-
-            {error && <p style={{color: "red"}}>{(error as Error).message}</p>}
         </div>
     );
 };

@@ -58,7 +58,7 @@ const PostmarkModal: React.FC<ModalProps> = ({ postmark, imageMapPromise, onClos
                 <ImageCarousel postmark={postmark} images={imageMapPromise} />
             </ImageContainer>
             <Content>
-                <Detail postmark={postmark} images={imageMapPromise} />
+                <Detail postmark={postmark} imageMapPromise={imageMapPromise} />
                 <Button onClick={() => setShowTicketModal(true)}>Create Ticket</Button>
             </Content>
         </Modal>

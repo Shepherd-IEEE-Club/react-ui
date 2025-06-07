@@ -6,6 +6,7 @@ import {PostmarkImageModel, PostmarkModel} from '@woco/db/models/postmark.ts';
 import {FullImageSchema, PostmarkImageSchema, PostmarkSchema, PostmarkTableRowSchema} from "@woco/schema/postmark.ts";
 import PostmarkModal from "@woco/web/pages/PostmarkModal";
 import {Op} from 'sequelize';
+import Ticket from "@woco/web/pages/Ticket";
 
 function extractUniquePostmarkIds(tickets: { postmark_id: number }[]) {
     return Array.from(new Set(tickets.map(t => t.postmark_id)));
@@ -13,13 +14,15 @@ function extractUniquePostmarkIds(tickets: { postmark_id: number }[]) {
 
 
 export const ticketsRouter = router({
+
+    // Add ticket to DB
     create: procedure
         .input(TicketInputSchema)
         .output(TicketSchema)
         .mutation(async ({input}) => {
             const ticket = await TicketModel.create({
                 ...input,
-                status_id: input.status_id ?? 1,
+                status_id: input.status_id ?? 1, // always pending
                 created_at: new Date(), // override to ensure consistency
             });
 
@@ -177,10 +180,29 @@ export const ticketsRouter = router({
 
 
     approve: procedure
-        .input(z.object({ ticket_id: z.number() }))
+        .input(z.object({
+            ticket_id: z.number(),
+            // TODO track approver
+            // approver_id: z.number(),
+        }))
         .mutation(async ({ input }) => {
             // FIXME image stuff
-            await TicketModel.update({ status_id: 2 }, { where: { id: input.ticket_id } });
+            const ticket = await TicketModel.findByPk(input.ticket_id);
+
+            if (!ticket) {
+                throw new Error("Ticket not found");
+            }
+
+            if (ticket.status_id !== 1) {
+                throw new Error("Ticket must be pending to approve");
+            }
+
+            await ticket.update({
+                status_id: 2,
+                // approved_by: input.approver_id,
+            });
+
+            return ticket.toJSON();
         }),
 
     deny: procedure
@@ -191,17 +213,26 @@ export const ticketsRouter = router({
             })
         )
         .mutation(async ({ input, ctx }) => {
-            // Optionally check auth
+            // TODO auth
             // if (!ctx.session?.user) throw new Error("Unauthorized");
-            console.log(input)
 
-            await TicketModel.update(
+            const ticket = await TicketModel.findByPk(input.id);
+
+            if (!ticket) {
+                throw new Error("Ticket not found");
+            }
+
+            if (ticket.status_id !== 1) {
+                throw new Error("Ticket must be pending");
+            }
+            console.log(ticket)
+
+            await ticket.update(
                 {
                     status_id: 3, // Denied
-                    deny_comment: input.deny_comment, // ✅ correct
+                    deny_comment: input.deny_comment,
                     // updated_by: ctx.session.user.id,
-                },
-                { where: { id: input.id } }
+                }
             );
         }),
 

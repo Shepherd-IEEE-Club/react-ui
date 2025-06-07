@@ -23,11 +23,6 @@ const ApproverView: React.FC = () => {
     const tickets = data?.tickets ?? [];
     const postmarks = data?.postmarks ?? {};
 
-    const {data: images} = trpc.tickets.images.useQuery(
-        {ticket: selectedTicket!},
-        {enabled: !!selectedTicket}
-    );
-
     const approve = useApproveTicket();
     const deny = useDenyTicket();
 
@@ -66,13 +61,8 @@ const ApproverView: React.FC = () => {
 
             {selectedTicket && (
                 <TicketModal
-                    detail={
-                        <Detail
-                            ticket={selectedTicket}
-                            postmark={PostmarkSchema.parse(postmarks[selectedTicket.postmark_id])}
-                            images={images ?? {}}
-                        />
-                    }
+                    ticket={selectedTicket}
+                    postmark={PostmarkSchema.parse(postmarks[selectedTicket.postmark_id])}
                     onClose={() => setSelectedTicket(null)}
                     onApprove={() => {
                         approve.mutate({ticket_id: selectedTicket.id});

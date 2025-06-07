@@ -2,9 +2,14 @@ import React from "react";
 import styled from "styled-components";
 import Modal from "@woco/web/components/Modal.tsx";
 import {Button} from "@woco/web/pages/style.ts";
+import type {Ticket} from "@woco/schema/ticket.ts";
+import type {z} from "zod";
+import {PostmarkSchema} from "@woco/schema/postmark.ts";
+import Detail from "@woco/web/pages/Ticket/Detail.tsx";
 
 interface Props {
-    detail: React.ReactNode;
+    ticket: Ticket;
+    postmark: z.infer<typeof PostmarkSchema>;
     onClose: () => void;
     onApprove?: () => void;
     onDeny?: () => void;
@@ -37,11 +42,15 @@ const DenyButton = styled(Button)`
     color: white;
 `;
 
-const TicketModal: React.FC<Props> = ({detail, onClose, onApprove, onDeny}) => {
+const TicketModal: React.FC<Props> = ({postmark, ticket, onClose, onApprove, onDeny}) => {
     return (
         <Modal onClose={onClose}>
             <Wrapper>
-                {detail}
+                <Detail
+                    ticket={ticket}
+                    postmark={postmark}
+                    // imageMapPromise={imageMapPromise}
+                />
 
                 {(onApprove || onDeny) && (
                     <Footer>

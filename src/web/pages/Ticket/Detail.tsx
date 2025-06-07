@@ -1,16 +1,16 @@
-import React from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import styled from "styled-components";
 import Modal from "@woco/web/components/Modal.tsx";
 import type {Ticket} from "@woco/schema/ticket.ts";
 import type {z} from "zod";
 import type {PostmarkSchema, PostmarkImageSchema, ImageMap} from "@woco/schema/postmark.ts";
 import {TICKET_STATUS_LABELS} from "@woco/web/constants.ts";
+import {trpcClient} from "@woco/web/trpc.ts";
 
 
 interface Props {
     ticket: Ticket;
     postmark: z.infer<typeof PostmarkSchema>;
-    images: Promise<ImageMap>;
 }
 
 const Block = styled.div`
@@ -90,13 +90,28 @@ const StyledImage = styled.img<{ $removed?: boolean; $added?: boolean }>`
             $added ? "green" : $removed ? "red" : "transparent"};
 `;
 
-const Detail: React.FC<Props> = ({ticket, postmark, images}) => {
+const Detail: React.FC<Props> = ({ticket, postmark}) => {
     const changes = ticket.changes ?? {};
 
     // FIXME
     const postmarkEntries = Object.entries(postmark).filter(
         ([key]) => key !== "id" && key !== "image"
     );
+
+
+    // Blar blar something something modal loading lazy cant update iDK FIXME
+    const imageMapPromise = useMemo(() => {
+        return trpcClient.tickets.images.query({ ticket });
+    }, [ticket.id]);
+
+
+    const [resolvedImages, setResolvedImages] = useState<ImageMap>({});
+    useEffect(() => {
+        imageMapPromise.then(setResolvedImages);
+    }, [imageMapPromise]);
+
+
+
 
 
     return (
@@ -150,7 +165,7 @@ const Detail: React.FC<Props> = ({ticket, postmark, images}) => {
 
                     {/*FIXME ensure proper order*/}
                     <ImageList>
-                        {Object.values(images)
+                        {Object.values(resolvedImages)
                             .filter((img) => img.postmark_id != null)
                             .map((img) => (
                                 <StyledImage
@@ -161,10 +176,10 @@ const Detail: React.FC<Props> = ({ticket, postmark, images}) => {
                     </ImageList>
 
                     <ImageList>
-                        {Object.values(images).map((img) => {
+                        {Object.values(resolvedImages).map((img) => {
                             // if image is in the removal list, its being removed
                             const isRemoved = ticket.changes.remove_images?.includes(img.id)
-                            console.log(images)
+                            console.log(resolvedImages)
                             // if image has a ticket id, it has yet to be added
                             const isAdded = img.ticket_id != null;
 

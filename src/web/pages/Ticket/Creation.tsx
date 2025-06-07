@@ -10,7 +10,7 @@ import {trpc} from "@woco/web/trpc.ts";
 
 
 interface Props {
-    ticket?: Ticket | null;
+    ticket?: Ticket | null; // Optionally pass in existing ticket
     postmark: z.infer<typeof PostmarkSchema>;
     images: Promise<ImageMap>;
     onClose: () => void;
@@ -114,6 +114,14 @@ const Detail: React.FC<Props> = ({ticket, postmark, images, onClose}) => {
 
 
     const createTicket = trpc.tickets.create.useMutation();
+
+    const newTicket = ticket ?? {
+        user_id: 1,
+        postmark_id: postmark.id,
+        // status_id: 1,
+        changes: {},
+    };
+
 
 
     return (
@@ -272,11 +280,11 @@ const Detail: React.FC<Props> = ({ticket, postmark, images, onClose}) => {
                             onClick={() => {
                                 console.log("Submitting changes:", changes);
                                 createTicket.mutate({
-                                    user_id: ticket.user_id,
-                                    postmark_id: ticket.postmark_id,
+                                    user_id: newTicket.user_id,
+                                    postmark_id: newTicket.postmark_id,
                                     // comment: ticket.comment,
                                     changes,
-                                    status_id: 1, // or whatever you want
+                                    // status_id: 1, // or whatever you want
                                 });
 
                             }}
