@@ -54,3 +54,11 @@ initDb()
     });
 
 // console.dir(appRouter._def.record, { depth: 5 });
+
+// Login handler
+app.use('/login', (req, res) => {
+  res.send({
+    token: 'test123'
+  });
+});
+app.listen(8080, () => console.log('API is running on http://localhost:8080/login'));

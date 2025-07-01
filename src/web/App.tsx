@@ -16,6 +16,10 @@ import TicketsPage from "@woco/web/pages/Ticket";
 import {ModalManagerWrapper} from "@woco/web/pages/ModalManager.tsx";
 import {TableContext} from './context/TableContext';
 import {TableProvider} from "@woco/web/context/TableProvider.tsx";
+import Dashboard from './components/Dashboard/Dashboard';
+import Login from './components/Login/Login';
+import Preferences from './components/Preferences/Preferences';
+import useToken from './useToken';
 /* ───────────────────────  styling  ─────────────────────── */
 
 const GlobalStyle = createGlobalStyle`
@@ -69,6 +73,10 @@ export default function App() {
             ],
         })
     );
+    const {token, setToken } = useToken();
+    if(!token) {
+        return <Login setToken={setToken} />
+    }
 
     return (
         <trpc.Provider client={trpcClient} queryClient={queryClient}>
@@ -92,6 +100,14 @@ export default function App() {
                         </Page>
                     </TableProvider>
                 </Router>
+        <Router>
+            <Routes>
+                <Route path="/dashboard">
+                </Route>
+                <Route path="/preferences">
+                </Route>
+            </Routes>
+        </Router>
             </QueryClientProvider>
         </trpc.Provider>
     )
