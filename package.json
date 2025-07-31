@@ -23,12 +23,6 @@
     "vitest": "^3.0.7",
     "zod": "^3.25.23"
   },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build",
-    "msw": "npx msw init public/ --save"
-  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -57,5 +51,12 @@
     "workerDirectory": [
       "public"
     ]
+  },
+    "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "tsx src/server/server.ts",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
+    "msw": "npx msw init public/ --save"
   }
 }

@@ -1,3 +1,4 @@
+console.log("â Hello from TypeScript");
 import express from 'express';
 import cors from 'cors';
 import { Sequelize, DataTypes, Op } from 'sequelize';
@@ -49,7 +50,7 @@ initDb()
         () => app.listen(port, () =>
         console.log(`🌐  http://localhost:${port}`)))
     .catch(err => {
-        console.error('DB init failed:', err);
+        console.error('DB init fleailed:', err);
         process.exit(1);
     });
 

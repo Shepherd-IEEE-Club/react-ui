@@ -1,8 +1,14 @@
 { pkgs ? import <nixpkgs> {} }:
 
 pkgs.mkShell {
-  buildInputs = [
-    pkgs.nodejs_20
-    pkgs.yarn
-  ];
+  buildInputs = (with pkgs; [
+    yarn
+    nodejs_20
+
+  ]) ++ (
+    with pkgs.nodePackages; [
+      ts-node
+      typescript
+    ]
+  );
 }
