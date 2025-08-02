@@ -1,5 +1,5 @@
 // src/db/models/postmark.ts
-import {DataTypes, Model, ForeignKey} from 'sequelize';
+import {DataTypes, Model, ForeignKey, NonAttribute} from 'sequelize';
 import {sequelize} from '../client';
 import { TicketModel } from './ticket';
 
@@ -12,6 +12,7 @@ export class PostmarkModel extends Model {
     declare size: string | null;
     declare colors: string | null;
     declare adhoc: Record<string, any>;
+    declare images: NonAttribute<PostmarkImageModel[]>;
 }
 
 PostmarkModel.init(
@@ -29,10 +30,15 @@ PostmarkModel.init(
             allowNull: true,
             defaultValue: {},
         }
+
+
+
+
     },
     {
         sequelize,
         tableName: 'postmark',
+        freezeTableName: true,
         timestamps: false,
     }
 );

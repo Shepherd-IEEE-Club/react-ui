@@ -91,7 +91,7 @@ const Search: React.FC = () => {
         isFetchingNextPage,
         isLoading,
         error,
-    } = trpc.postmarks.infinite.useInfiniteQuery(
+    } = trpc.postmark.infinite.useInfiniteQuery(
         { limit: PAGE_SIZE, ...appliedFilters },
 
         {
@@ -207,7 +207,7 @@ const Search: React.FC = () => {
                         <PostmarkModal
                             postmark={postmark}
 
-                            imageMapPromise={trpcClient.postmarks.images.query({ id: postmark.id })}
+                            imageMapPromise={trpcClient.postmark.images.query({ id: postmark.id })}
                             onClose={() => setSelectedPostmark(null)}
                         />
                     )

@@ -1,22 +1,56 @@
 import {router, procedure} from '@woco/server/trpc.ts';
 import {PostmarkImageModel, PostmarkModel} from '@woco/db/models/postmark.ts';
-import {
-    buildPostmarkWhereClause,
-    fetchPaginatedPostmarks,
-    PostmarkFilterSchema
-} from "../utils/fetchPaginatedPostmarks.ts";
-import {FullImageSchema, ImageMapSchema, PostmarkImageSchema, PostmarkSchema} from "@woco/schema/postmark.ts";
+// import {
+//     buildPostmarkWhereClause,
+//     // fetchPaginatedPostmarks,
+//     PostmarkFilterSchema
+// } from "../utils/fetchPaginatedPostmarks.ts";
+
+
+import {PostmarkImageSchema, PostmarkSchema, PostmarkTableRowSchema} from "@woco/schema/postmark.ts";
 import {z} from "zod";
-import {Op} from "sequelize";
+import {Op, WhereOptions} from "sequelize";
+
+const PostmarkFilterSchema = z.object({
+    limit: z.number().min(1).max(10000).default(50),
+    cursor: z.number().nullish(),
+
+    postmark: z.string().optional(),
+
+});
+
+export type PostmarkFilterInput = z.infer<typeof PostmarkFilterSchema>;
+
+function buildPostmarkWhereClause(
+    input: PostmarkFilterInput
+): WhereOptions {
+    const where: WhereOptions = {};
+
+    // Pagination
+    // if (input.cursor) {
+    //     where.id = { [Op.gt]: input.cursor };
+    // }
+
+    // Filter: partial match on "postmark" field
+    if (input.postmark) {
+        where.postmark = { [Op.iLike]: `%${input.postmark}%` };
+    }
+
+    return where;
+}
+
 
 export const postmarksRouter = router({
+
+
+    // get postmarks with pagination and optional filters
     infinite: procedure
         .input(
-            z.object({
-                limit: z.number().min(1).max(10000).default(50),
-                cursor: z.number().optional()
-            })
-        )
+            PostmarkFilterSchema
+        ).output(z.object({
+                items: z.array(PostmarkTableRowSchema),
+                nextCursor: z.number().optional(),
+            }))
         .query(async ({ input }) => {
             const { limit, cursor } = input;
             const PAGE_SIZE = limit;
@@ -26,28 +60,35 @@ export const postmarksRouter = router({
                 ...(cursor ? { id: { [Op.gt]: cursor } } : {})
             };
 
-            const rows = await PostmarkModel.findAll({
+            const rows: PostmarkModel[] = await PostmarkModel.findAll({
                 where,
                 order: [['id', 'ASC']],
                 limit: PAGE_SIZE + 1,
                 attributes: ['id', 'postmark', 'town', 'state', 'date_seen'],
-                include: [{
+
+
+                include: [
+                    // attach thumbnail to satisfy the postmarktablerowschema
+                    {
                     model: PostmarkImageModel,
                     as: 'images',
+
+                    // no data column
                     attributes: ['id', 'thumbnail'],
                     separate: true,
+
+                    // only need 1 thumbnail
+                    limit: 1
                 }],
             });
 
             const hasNextPage = rows.length > PAGE_SIZE;
             const items = hasNextPage ? rows.slice(0, -1) : rows;
-            const nextCursor = hasNextPage ? rows[PAGE_SIZE].id : undefined;
+
+            const nextCursor = hasNextPage ? rows[PAGE_SIZE]!.id : undefined;
 
             return {
-                items: items.map(r => ({
-                    ...r.toJSON(),
-                    imageIds: r.images.map(img => img.id),
-                })),
+                items: items.map(r => r.toJSON()),
                 nextCursor,
             };
         }),

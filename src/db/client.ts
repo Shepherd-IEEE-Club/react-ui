@@ -8,5 +8,6 @@ export const sequelize = new Sequelize({
 
 export async function initDb() {
     await sequelize.authenticate();
+    await sequelize.sync(); // FIXME
     console.log('✅ Database connected');
 }

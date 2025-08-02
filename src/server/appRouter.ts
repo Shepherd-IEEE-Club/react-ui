@@ -1,10 +1,10 @@
 import { router } from './trpc';
-import { ticketsRouter } from './routers/tickets';
-import { postmarksRouter } from './routers/postmarks';
+import { ticketsRouter } from './routers/ticket.ts';
+import { postmarksRouter } from './routers/postmark.ts';
 
 export const appRouter = router({
-    tickets: ticketsRouter,
-    postmarks: postmarksRouter,
+    ticket: ticketsRouter,
+    postmark: postmarksRouter,
 });
 
 export type AppRouter = typeof appRouter;

@@ -8,11 +8,15 @@ export const PostmarkSchema = z.object({
     date_seen: z.string().nullable().optional(),
     size: z.string().nullable().optional(),
     colors: z.string().nullable().optional(),
+    adhoc: z.string().nullable().optional(),
 });
 
 // Postmark with a thumbnail
 export const PostmarkTableRowSchema = PostmarkSchema.extend({
-    thumbnail: z.string(),                  // base64 thumbnail
+    images: z.array(z.object({
+        id: z.number(),
+        thumbnail: z.string(),
+    })).max(1).default([])
 });
 
 export const PostmarkImageSchema = z.object({

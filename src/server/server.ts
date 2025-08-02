@@ -48,6 +48,7 @@ app.get('*', (req, res) => {
 // FIXME Looks stupid
 initDb()
     .then(
+
         () => app.listen(port, () =>
         console.log(`🌐  http://localhost:${port}`)))
     .catch(err => {
