@@ -1,20 +1,17 @@
 // src/db/models/postmark.ts
-import {DataTypes, Model, InferAttributes, InferCreationAttributes, ForeignKey} from 'sequelize';
+import {DataTypes, Model, ForeignKey} from 'sequelize';
 import {sequelize} from '../client';
-import {TicketModel} from "./ticket.ts";
+import { TicketModel } from './ticket';
 
-/* ---------- Postmark ---------- */
-export class PostmarkModel extends Model<
-    InferAttributes<PostmarkModel>,
-    InferCreationAttributes<PostmarkModel>
-> {
+export class PostmarkModel extends Model {
     declare id: number;
-    declare postmark: string;
+    declare postmark: string; // "name"
     declare town: string;
     declare state: string;
     declare date_seen: string | null;
     declare size: string | null;
     declare colors: string | null;
+    declare adhoc: Record<string, any>;
 }
 
 PostmarkModel.init(
@@ -26,22 +23,30 @@ PostmarkModel.init(
         date_seen: {type: DataTypes.STRING, allowNull: true},
         size: {type: DataTypes.STRING, allowNull: true},
         colors: {type: DataTypes.STRING, allowNull: true},
+
+        adhoc: {
+            type: DataTypes.JSONB,
+            allowNull: true,
+            defaultValue: {},
+        }
     },
     {
         sequelize,
-        tableName: 'postmarks',
+        tableName: 'postmark',
         timestamps: false,
     }
 );
 
-/* ---------- PostmarkImage ---------- */
-export class PostmarkImageModel extends Model<
-    InferAttributes<PostmarkImageModel>,
-    InferCreationAttributes<PostmarkImageModel>
-> {
+
+export class PostmarkImageModel extends Model {
     declare id: number
-    declare postmark_id: ForeignKey<number>;
-    declare ticket_id: ForeignKey<number>;
+
+    declare postmark_id?: ForeignKey<number>;
+    declare postmark?: PostmarkModel;
+
+    declare ticket_id?: ForeignKey<number>;
+    declare ticket?: TicketModel;
+
     declare data: Buffer;
     declare thumbnail: string;
 
@@ -50,17 +55,22 @@ export class PostmarkImageModel extends Model<
 PostmarkImageModel.init(
     {
         id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+
+        // Images can belong to a ticket or postmar
+        // TODO or both?? uhhmmm
         postmark_id: {
             type: DataTypes.INTEGER,
             allowNull: true,
-            references: {model: 'postmarks', key: 'id'},
-            // onDelete: 'CASCADE',
-        //     TODO
+            references: {model: PostmarkModel, key: 'id'},
+
+            // delete image when postmark is deleted
+            onDelete: 'CASCADE',
+
         },
         ticket_id: {
             type: DataTypes.INTEGER,
             allowNull: true,
-            references: {model: 'tickets', key: 'id'},
+            references: {model: TicketModel, key: 'id'},
             // onDelete: 'CASCADE',
         },
         //     TODO bytes instead of BS4
@@ -82,6 +92,18 @@ PostmarkModel.hasMany(PostmarkImageModel, {
 PostmarkImageModel.belongsTo(PostmarkModel, {
     foreignKey: 'postmark_id',
 });
+
+
+PostmarkModel.hasMany(TicketModel, {
+    foreignKey: 'postmark_id',
+    as: 'tickets',
+});
+
+TicketModel.belongsTo(PostmarkModel, {
+    foreignKey: 'postmark_id',
+    as: 'postmark',
+});
+
 
 //FIXME
 

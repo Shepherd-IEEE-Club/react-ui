@@ -1,11 +1,8 @@
 import {CreationOptional, DataTypes, InferAttributes, InferCreationAttributes, Model} from "sequelize";
 import {sequelize} from "../client.ts";
 
-export class StateModel extends Model<
-    InferAttributes<StateModel>,
-    InferCreationAttributes<StateModel>
-> {
-    declare id: CreationOptional<number>;
+export class StateModel extends Model {
+    declare id: number;
     declare code: string;
     declare name: string;
 }
@@ -18,7 +15,7 @@ StateModel.init(
     },
     {
         sequelize,
-        tableName: 'states',
+        tableName: 'state',
         timestamps: false,
     }
 );

@@ -1,22 +1,6 @@
-import { Sequelize } from 'sequelize';
-import { DataTypes } from 'sequelize';
 import { UserModel } from './user';
-import {initTestSequelizeModel} from "./initTestSequelizeModel.ts";
 
-let sequelize: Sequelize;
-
-beforeAll(async () => {
-    sequelize = await initTestSequelizeModel(UserModel, {
-        id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-        name: { type: DataTypes.STRING, allowNull: false },
-        email: { type: DataTypes.STRING, allowNull: false, unique: true },
-    }, 'users');
-});
-
-
-afterAll(async () => {
-    await sequelize.close();
-});
+import '../test_sync.ts';
 
 describe('UserModel', () => {
     it('should create a user successfully', async () => {
@@ -46,5 +30,3 @@ describe('UserModel', () => {
         ).rejects.toThrow();
     });
 });
-
-// FIXME not working idk how fix

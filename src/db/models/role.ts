@@ -1,12 +1,13 @@
 import {CreationOptional, DataTypes, InferAttributes, InferCreationAttributes, Model} from "sequelize";
 import {sequelize} from "../client.ts";
+import {UserModel} from "./user.ts";
 
-export class RoleModel extends Model<
-    InferAttributes<RoleModel>,
-    InferCreationAttributes<RoleModel>
-> {
+export class RoleModel extends Model {
     declare id: CreationOptional<number>;
     declare name: string;
+
+    declare users?: UserModel[];
+
 }
 
 RoleModel.init(
@@ -16,7 +17,8 @@ RoleModel.init(
     },
     {
         sequelize,
-        tableName: 'roles',
+        tableName: 'role',
+        modelName: 'role',
         timestamps: false,
     }
 );

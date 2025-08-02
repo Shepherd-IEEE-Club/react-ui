@@ -11,22 +11,23 @@ const app = express();
 const port = 3001;
 
 
-// Enable CORS so your front end (e.g., Storybook) can access the API
-// 🟢 Make sure JSON parser is BEFORE tRPC middleware
 app.use(cors());
-app.use(express.json()); // 🧠 ESSENTIAL!!
+app.use(express.json());
 
 app.use('/trpc', (req, res, next) => {
     console.log('🧭 Request:', req.method, req.url);
     next();
 });
 
-// ✅ Wire the middleware directly
 app.use(
     '/trpc',
+
+    // @ts-ignore FIXME
     trpcExpress.createExpressMiddleware({
         router: appRouter,
         createContext: () => ({}),
+
+        // @ts-ignore FIXME
         transformer: superjson,
 
         onError({ error, path }) {
