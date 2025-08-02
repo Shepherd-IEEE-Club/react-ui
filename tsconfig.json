@@ -8,13 +8,15 @@
       "@woco/web/*": ["src/web/*"],
       "@woco/schema/*": ["src/schema/*"]
     },
-    "rootDir": "src",
+
     "outDir": "dist",
     "esModuleInterop": true,
     "strict": true,
     "skipLibCheck": true,
     "jsx": "react",
-    "allowImportingTsExtensions": true
+    "allowImportingTsExtensions": true,
+    "types": ["jest"]
   },
-  "include": ["src", ".storybook"]
+  "include": ["src", "**/*.test.ts", ".storybook"]
+
 }

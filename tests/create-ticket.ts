@@ -1,7 +1,7 @@
 import { createTRPCProxyClient, httpBatchLink } from '@trpc/client';
-import type { AppRouter } from '@woco/server/appRouter';
+import type { AppRouter } from 'src/server/appRouter';
 import superjson from 'superjson';
-import { TicketInputSchema } from '@woco/schema/ticket';
+import { TicketInputSchema } from 'src/schema/ticket';
 
 const client = createTRPCProxyClient<AppRouter>({
     links: [
