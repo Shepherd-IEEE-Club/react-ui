@@ -8,7 +8,7 @@ process.on('unhandledRejection', (err) => {
 });
 describe('user_role table', () => {
     it('creates user_role join entry', async () => {
-        const user = await UserModel.create({ name: 'jared', email: 'jared@fortnite.com' });
+        const user = await UserModel.create({ name: 'jared', email: 'jared@fortnite.com'});
         const role = await RoleModel.create({ name: 'admin' });
 
         UserRoleModel.create({

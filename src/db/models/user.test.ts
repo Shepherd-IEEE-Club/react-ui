@@ -4,7 +4,7 @@ import '../test_sync.ts';
 
 describe('UserModel', () => {
     it('should create a user successfully', async () => {
-        const user = await UserModel.create({ name: 'Alice', email: 'alice@example.com' });
+        const user = await UserModel.create({ name: 'Alice', email: 'alice@example.com'});
         expect(user.id).toBeDefined();
         expect(user.name).toBe('Alice');
         expect(user.email).toBe('alice@example.com');

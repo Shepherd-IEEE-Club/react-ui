@@ -37,6 +37,8 @@
     "@trpc/react-query": "^11.1.2",
     "@vitejs/plugin-react": "^4.5.0",
     "@woco/db": "^1.0.0",
+    "bcrypt": "^6.0.0",
+    "bcrypt-ts": "^7.1.0",
     "cors": "^2.8.5",
     "express": "^4.21.2",
     "msw-storybook-addon": "^2.0.4",
@@ -61,12 +63,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "server": "tsx src/server/server.ts",
     "sync_db": "tsx src/db/sync.ts",
-
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "msw": "npx msw init public/ --save"
   },
   "type": "module",
   "verbose": true
-
 }

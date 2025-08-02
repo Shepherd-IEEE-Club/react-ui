@@ -1,5 +1,5 @@
 import {z} from 'zod';
-import {router, procedure} from '@woco/server/trpc.ts';
+import {router, publicProcedure, protectedProcedure} from '@woco/server/trpc.ts';
 import {TicketInputSchema, TicketSchema} from '@woco/schema/ticket';
 import {TicketModel} from '@woco/db/models/ticket';
 import {PostmarkImageModel, PostmarkModel} from '@woco/db/models/postmark.ts';
@@ -16,7 +16,7 @@ function extractUniquePostmarkIds(tickets: { postmark_id: number }[]) {
 export const ticketsRouter = router({
 
     // Add ticket to DB
-    create: procedure
+    create: protectedProcedure
         .input(TicketInputSchema)
         .output(TicketSchema)
         .mutation(async ({input}) => {
@@ -30,13 +30,13 @@ export const ticketsRouter = router({
         }),
 
 
-    getAll: procedure.query(async () => {
+    getAll: protectedProcedure.query(async () => {
         return await TicketModel.findAll({
             order: [['created_at', 'DESC']],
         });
     }),
 
-    byPostmark: procedure
+    byPostmark: protectedProcedure
         .input(z.object({postmark_id: z.number()}))
         .query(async ({input}) => {
             return await TicketModel.findAll({
@@ -46,7 +46,7 @@ export const ticketsRouter = router({
         }),
 
     // get images for a ticket (postmark's and changes)
-    images: procedure
+    images: protectedProcedure
         .input(z.object({ticket: TicketSchema}))
         .output(z.array(PostmarkImageSchema))
         .query(async ({input}) => {
@@ -76,7 +76,7 @@ export const ticketsRouter = router({
 
 
     // paginated for future
-    mine: procedure
+    mine: protectedProcedure
         .input(
             z.object({
                 // FIXME return all if not given limit
@@ -179,7 +179,7 @@ export const ticketsRouter = router({
         }),
 
 
-    approve: procedure
+    approve: protectedProcedure
         .input(z.object({
             ticket_id: z.number(),
             // TODO track approver
@@ -205,7 +205,7 @@ export const ticketsRouter = router({
             return ticket.toJSON();
         }),
 
-    deny: procedure
+    deny: protectedProcedure
         .input(
             TicketSchema.pick({
                 id: true,

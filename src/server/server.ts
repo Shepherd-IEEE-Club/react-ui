@@ -4,7 +4,7 @@ import cors from 'cors';
 import { Sequelize, DataTypes, Op } from 'sequelize';
 import { initDb } from '@woco/db';
 import {appRouter} from "./appRouter.ts";
-
+import { createContext } from './context';
 import * as trpcExpress from '@trpc/server/adapters/express';
 import superjson from "superjson";
 const app = express();
@@ -25,7 +25,7 @@ app.use(
     // @ts-ignore FIXME
     trpcExpress.createExpressMiddleware({
         router: appRouter,
-        createContext: () => ({}),
+        createContext: createContext,
 
         // @ts-ignore FIXME
         transformer: superjson,

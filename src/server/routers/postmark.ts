@@ -1,4 +1,4 @@
-import {router, procedure} from '@woco/server/trpc.ts';
+import {router, publicProcedure} from '@woco/server/trpc.ts';
 import {PostmarkImageModel, PostmarkModel} from '@woco/db/models/postmark.ts';
 // import {
 //     buildPostmarkWhereClause,
@@ -44,7 +44,7 @@ export const postmarksRouter = router({
 
 
     // get postmarks with pagination and optional filters
-    infinite: procedure
+    infinite: publicProcedure
         .input(
             PostmarkFilterSchema
         ).output(z.object({
@@ -95,7 +95,7 @@ export const postmarksRouter = router({
 
 
     // postmark -> array of fullsize b64 images
-    images: procedure
+    images: publicProcedure
         .input(PostmarkSchema.pick({ id: true })) // Just need id.
         .output(z.array(PostmarkImageSchema))
         .query(async ({ input }) => {

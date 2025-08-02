@@ -8,11 +8,13 @@ import { sequelize } from '../client';
 import {RoleModel} from "./role.ts";
 import {StateModel} from "./state.ts";
 
-
 export class UserModel extends Model {
     declare id: CreationOptional<number>;
     declare name: string;
     declare email: string;
+    declare password_hash: string;
+
+
 
     declare roles?: RoleModel[];
     declare states?: StateModel[];
@@ -27,6 +29,11 @@ UserModel.init(
         },
         name: { type: DataTypes.STRING, allowNull: false },
         email: { type: DataTypes.STRING, allowNull: false, unique: true },
+
+
+        // allow null password in database
+        // however utils/password will not verify null password
+        password_hash: { type: DataTypes.STRING, allowNull: true },
     },
     {
         sequelize,
