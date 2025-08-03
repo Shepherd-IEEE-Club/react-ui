@@ -8,3 +8,4 @@ import * as models from '@woco/db/models'
     const { sequelize } = await import('./client.ts');
     await sequelize.sync({ force: true });
 })();
+// fixme not work

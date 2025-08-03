@@ -14,6 +14,7 @@ export const Header: React.FC = () => (
                 <Link to="/search">Search</Link>
                 <Link to="/ticket">Ticket</Link>
                 <Link to="/info">Info</Link>
+                <Link to="/login">Login</Link>
             </nav>
             {/*<div className="header-right">*/}
             {/*    <Button size="small" label="Contact Us" />*/}

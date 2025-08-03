@@ -16,6 +16,7 @@ import TicketsPage from "@woco/web/pages/Ticket";
 import {ModalManagerWrapper} from "@woco/web/pages/ModalManager.tsx";
 import {TableContext} from './context/TableContext';
 import {TableProvider} from "@woco/web/context/TableProvider.tsx";
+import {LoginPage} from "@woco/web/pages/Login";
 /* ───────────────────────  styling  ─────────────────────── */
 
 const GlobalStyle = createGlobalStyle`
@@ -85,6 +86,7 @@ export default function App() {
                                     <Route path="/search" element={<SearchableList/>}/>
                                     <Route path="/ticket" element={<TicketsPage/>}/>
                                     <Route path="/info" element={<InfoPage/>}/>
+                                    <Route path="/login" element={<LoginPage/>}/>
                                 </Routes>
                             </Container>
 

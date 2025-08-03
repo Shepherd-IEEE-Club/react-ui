@@ -7,9 +7,10 @@ const t = initTRPC.context<Context>().create({
 });
 
 export const router = t.router;
+
 export const publicProcedure = t.procedure;
 
-const requireUser = t.middleware(({ ctx, next }) => {
+export const requireUser = t.middleware(({ ctx, next }) => {
     if (!ctx.session?.user_id) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
     }
@@ -23,10 +24,19 @@ const requireUser = t.middleware(({ ctx, next }) => {
     });
 });
 
+export const protectedProcedure = t.procedure.use(requireUser);
+
+
+
+
+
+
+
+
+
 // FIXME investigate
 /**
  * Use this for any procedure that needs authentication.
  *
  *   protectedProcedure.query/ mutation(...)
  */
-export const protectedProcedure = t.procedure.use(requireUser);

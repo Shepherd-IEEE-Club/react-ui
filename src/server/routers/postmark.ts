@@ -1,4 +1,4 @@
-import {router, publicProcedure} from '@woco/server/trpc.ts';
+import {router, publicProcedure, requireUser} from '@woco/server/trpc.ts';
 import {PostmarkImageModel, PostmarkModel} from '@woco/db/models/postmark.ts';
 // import {
 //     buildPostmarkWhereClause,
