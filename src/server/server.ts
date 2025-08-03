@@ -3,7 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import { Sequelize, DataTypes, Op } from 'sequelize';
 import { initDb } from '@woco/db';
-import {appRouter} from "./appRouter.ts";
+import {appRouter} from "./trpc/appRouter.ts";
 import { createContext } from './context';
 import * as trpcExpress from '@trpc/server/adapters/express';
 import superjson from "superjson";

@@ -1,7 +1,7 @@
-import {router, publicProcedure, protectedProcedure} from '../trpc';
+import {router, publicProcedure, protectedProcedure} from '../index.ts';
 import {z} from 'zod';
-import {UserModel} from '@woco/db/models/user';
-import {createPasswordHash, verifyPassword} from '@woco/server/utils/password';
+import {UserModel} from '@woco/db/models/user.ts';
+import {createPasswordHash, verifyPassword} from '../../utils/password.ts';
 
 export const authRouter = router({
     signup: publicProcedure

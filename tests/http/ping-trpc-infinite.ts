@@ -1,5 +1,5 @@
 import { createTRPCProxyClient, httpBatchLink } from '@trpc/client';
-import type { AppRouter } from '@woco/server/appRouter'; // ✅ correct type
+import type { AppRouter } from 'src/server/trpc/appRouter'; // ✅ correct type
 import superjson from 'superjson';
 
 const client = createTRPCProxyClient<AppRouter>({

@@ -1,12 +1,15 @@
-import { appRouter } from '@woco/server/appRouter';
-import { sequelize } from '@woco/db/client';
-import { UserModel } from '@woco/db/models/user';
-import { verifyPassword } from '@woco/server/utils/password.ts';
+import { appRouter } from '../appRouter.ts';
+import { sequelize } from '@woco/db/client.ts';
+import { UserModel } from '@woco/db/models/user.ts';
+import { verifyPassword } from '../../utils/password.ts';
 import '@woco/db/test_sync.ts';
+import {makeTestCaller} from "../../../../test/test_caller.ts";
 
+const caller = await makeTestCaller(
+    {user_id: 21}
+);
 
 describe('authRouter', () => {
-    const caller = appRouter.createCaller({});
 
     it('creates user and stores correct password hash', async () => {
         const email = 'hashcheck@example.com';

@@ -1,7 +1,7 @@
 // scripts/trpc-check.ts
 import { createTRPCProxyClient, httpBatchLink } from '@trpc/client';
 import superjson from 'superjson';
-import type { AppRouter } from '@woco/server/appRouter';
+import type { AppRouter } from 'src/server/trpc/appRouter';
 
 const client = createTRPCProxyClient<AppRouter>({
     // transformer: superjson,

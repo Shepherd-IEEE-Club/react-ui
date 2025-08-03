@@ -1,5 +1,5 @@
 import { createTRPCProxyClient, httpBatchLink } from '@trpc/client';
-import type { AppRouter } from '@woco/server/appRouter';
+import type { AppRouter } from 'src/server/trpc/appRouter';
 import superjson from 'superjson';
 import { z } from 'zod';
 

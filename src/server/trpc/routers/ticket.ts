@@ -1,7 +1,7 @@
 import {z} from 'zod';
-import {router, publicProcedure, protectedProcedure} from '@woco/server/trpc.ts';
-import {TicketInputSchema, TicketSchema} from '@woco/schema/ticket';
-import {TicketModel} from '@woco/db/models/ticket';
+import {router, publicProcedure, protectedProcedure} from '../index.ts';
+import {TicketInputSchema, TicketSchema} from '@woco/schema/ticket.ts';
+import {TicketModel} from '@woco/db/models/ticket.ts';
 import {PostmarkImageModel, PostmarkModel} from '@woco/db/models/postmark.ts';
 import {FullImageSchema, PostmarkImageSchema, PostmarkSchema, PostmarkTableRowSchema} from "@woco/schema/postmark.ts";
 import PostmarkModal from "@woco/web/pages/PostmarkModal";

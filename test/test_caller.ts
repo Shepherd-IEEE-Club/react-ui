@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import { appRouter } from '@woco/server/appRouter';
+import { appRouter } from '../src/server/trpc/appRouter.ts';
 import { createContext } from '@woco/server/context';
 import { createFakeSession } from './fake_session';
 import type { SessionData } from '@woco/lib/session';

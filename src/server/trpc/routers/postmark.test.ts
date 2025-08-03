@@ -1,6 +1,6 @@
-import { postmarksRouter } from './postmark';
-import { PostmarkModel, PostmarkImageModel } from '@woco/db/models/postmark';
-import {makeTestCaller} from "../../../test/test_caller.ts";
+import { postmarksRouter } from './postmark.ts';
+import { PostmarkModel, PostmarkImageModel } from '@woco/db/models/postmark.ts';
+import {makeTestCaller} from "../../../../test/test_caller.ts";
 
 const caller = await makeTestCaller(
     {user_id: 21}
@@ -9,7 +9,7 @@ const caller = await makeTestCaller(
 
 beforeAll(async () => {
     // Optionally: reset in-memory SQLite
-    const { sequelize } = await import('@woco/db/client'); // assumes `client.ts` exports sequelize
+    const { sequelize } = await import('@woco/db/client.ts'); // assumes `client.ts` exports sequelize
     await sequelize.sync({ force: true });
 
     // Insert seed data
