@@ -1,10 +1,12 @@
-import { appRouter } from '@woco/server/appRouter';
 import '@woco/db/test_sync.ts'
+import {makeTestCaller} from "../../test/test_caller.ts";
 
-describe('tRPC Client (local caller)', () => {
 
-    const caller = appRouter.createCaller({});
+const caller = await makeTestCaller(
+    {user_id: 21}
+);
 
+describe('tRPC Client', () => {
     it('should fetch paged postmarks without throwing', async () => {
         const result = await caller.postmark.infinite({ limit: 10 });
 

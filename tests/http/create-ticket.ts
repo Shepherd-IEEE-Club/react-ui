@@ -31,7 +31,7 @@ async function main() {
     }
 
     try {
-        const response = await client.tickets.create.mutate(result.data);
+        const response = await client.ticket.create.mutate(result.data);
         console.log('✅ Ticket created:', response);
     } catch (err: any) {
         console.error('❌ tRPC mutation failed:', err.message ?? err);

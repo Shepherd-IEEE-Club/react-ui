@@ -1,9 +1,11 @@
 import { postmarksRouter } from './postmark';
 import { PostmarkModel, PostmarkImageModel } from '@woco/db/models/postmark';
-import { Sequelize } from 'sequelize';
-import { z } from 'zod';
+import {makeTestCaller} from "../../../test/test_caller.ts";
 
-let caller: ReturnType<typeof postmarksRouter.createCaller>;
+const caller = await makeTestCaller(
+    {user_id: 21}
+);
+
 
 beforeAll(async () => {
     // Optionally: reset in-memory SQLite
@@ -33,7 +35,6 @@ beforeAll(async () => {
     ]);
 
     // Setup tRPC caller
-    caller = postmarksRouter.createCaller({});
 });
 
 describe('postmarksRouter', () => {
@@ -43,7 +44,7 @@ describe('postmarksRouter', () => {
 
     // test thumbnails
     test('infinite ', async () => {
-        const result = await caller.infinite({ limit: 10 });
+        const result = await caller.postmark.infinite({ limit: 10 });
 
         expect(result.items.length).toBeGreaterThan(0);
 
@@ -53,7 +54,7 @@ describe('postmarksRouter', () => {
 
 
     test('images returns full base64-encoded data', async () => {
-        const result = await caller.images({ id: 1 });
+        const result = await caller.postmark.images({ id: 1 });
         expect(result).toHaveLength(2);
         expect(result[0]).toHaveProperty('data');
         // @ts-ignore
@@ -62,3 +63,5 @@ describe('postmarksRouter', () => {
         // expect(result[0].data).toBe(Buffer.from('image1').toString('base64'));
     });
 });
+
+//
