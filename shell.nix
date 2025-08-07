@@ -2,8 +2,8 @@
 
 pkgs.mkShell {
   buildInputs = (with pkgs; [
-    yarn
-    nodejs_20
+    corepack
+    nodejs_24
 
   ]) ++ (
     with pkgs.nodePackages; [

@@ -2,11 +2,12 @@
   "compilerOptions": {
     "target": "esnext",
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "node16",
     "baseUrl": ".",
     "paths": {
       "@woco/web/*": ["src/web/*"],
-      "@woco/schema/*": ["src/schema/*"]
+      "@woco/schema/*": ["src/schema/*"],
+      "@/*": ["src/*"]
     },
 
     "noUncheckedIndexedAccess": true,

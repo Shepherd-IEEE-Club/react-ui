@@ -7,18 +7,27 @@ import {appRouter} from "./trpc/appRouter.ts";
 import { createContext } from './context';
 import * as trpcExpress from '@trpc/server/adapters/express';
 import superjson from "superjson";
+
+import { sessionOptions } from '@/lib/session.ts'
+import { IronSession } from 'iron-session'
+
+
+
 const app = express();
 const port = 3001;
-
 
 app.use(cors());
 app.use(express.json());
 
-app.use('/trpc', (req, res, next) => {
-    console.log('🧭 Request:', req.method, req.url);
-    next();
-});
+// app.use()
 
+
+// Setup iron (session, cookies)
+// app.use(
+//     IronSession.
+// );
+
+// Setup TRPC
 app.use(
     '/trpc',
 
@@ -35,6 +44,13 @@ app.use(
         },
     }),
 );
+
+
+app.use('/trpc', (req, res, next) => {
+    console.log('🧭 Request:', req.method, req.url);
+    next();
+});
+
 
 const path = require('path');
 app.use(express.static(path.join(__dirname, '../web/dist')));
